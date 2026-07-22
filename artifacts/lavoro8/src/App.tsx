@@ -33,6 +33,7 @@ const ThankYouPage = lazy(() => import("@/pages/thank-you"));
 const BlogPage = lazy(() => import("@/pages/blog"));
 const BlogPostPage = lazy(() => import("@/pages/blog-post"));
 const FaqPage = lazy(() => import("@/pages/faq"));
+const TrustSafetyPage = lazy(() => import("@/pages/trust-safety"));
 const NotFound = lazy(() => import("@/pages/not-found"));
 
 const queryClient = new QueryClient({
@@ -202,6 +203,7 @@ function Router() {
         <Route path="/termini" component={TerminiPage} />
         <Route path="/refunds" component={RefundsPage} />
         <Route path="/about" component={AboutPage} />
+        <Route path="/trust-safety" component={TrustSafetyPage} />
         <Route path="/contact" component={ContactPage} />
         <Route path="/grazie" component={ThankYouPage} />
         <Route path="/blog/:slug" component={BlogPostPage} />
