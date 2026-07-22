@@ -1,11 +1,3 @@
-export function formatCurrency(amount: number) {
-  return new Intl.NumberFormat('it-IT', {
-    style: 'currency',
-    currency: 'EUR',
-    maximumFractionDigits: 0,
-  }).format(amount);
-}
-
 const COUNTRY_CURRENCY: Record<string, { code: string; locale: string }> = {
   IT: { code: "EUR", locale: "it-IT" },
   DE: { code: "EUR", locale: "de-DE" },
@@ -39,7 +31,21 @@ const COUNTRY_CURRENCY: Record<string, { code: string; locale: string }> = {
   US: { code: "USD", locale: "en-US" },
 };
 
-export function formatJobSalary(amount: number, country?: string | null): string {
+export function formatCurrency(amount?: number | null) {
+  if (amount == null || isNaN(amount)) return "€0";
+  try {
+    return new Intl.NumberFormat('it-IT', {
+      style: 'currency',
+      currency: 'EUR',
+      maximumFractionDigits: 0,
+    }).format(amount);
+  } catch {
+    return `€${amount}`;
+  }
+}
+
+export function formatJobSalary(amount?: number | null, country?: string | null): string {
+  if (amount == null || isNaN(amount)) return "";
   const cur = country ? (COUNTRY_CURRENCY[country] ?? COUNTRY_CURRENCY["IT"]) : COUNTRY_CURRENCY["IT"];
   try {
     return new Intl.NumberFormat(cur.locale, {
@@ -48,7 +54,7 @@ export function formatJobSalary(amount: number, country?: string | null): string
       maximumFractionDigits: 0,
     }).format(amount);
   } catch {
-    return `${amount.toLocaleString()} ${cur.code}`;
+    return `${amount} ${cur.code}`;
   }
 }
 
@@ -56,10 +62,17 @@ export function getCurrencyCode(country?: string | null): string {
   return country ? (COUNTRY_CURRENCY[country]?.code ?? "EUR") : "EUR";
 }
 
-export function formatDate(dateString: string) {
-  return new Intl.DateTimeFormat('it-IT', {
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
-  }).format(new Date(dateString));
+export function formatDate(dateString?: string | null) {
+  if (!dateString) return "";
+  try {
+    const d = new Date(dateString);
+    if (isNaN(d.getTime())) return dateString;
+    return new Intl.DateTimeFormat('it-IT', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+    }).format(d);
+  } catch {
+    return dateString;
+  }
 }

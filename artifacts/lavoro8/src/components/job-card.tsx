@@ -32,14 +32,14 @@ const CATEGORY_COLORS: Record<string, string> = {
   Altro: "bg-gray-100 text-gray-700 border-gray-200",
 };
 
-function CircleFlag({ country, size = 18 }: { country: string; size?: number }) {
-  const code = COUNTRY_FLAG_CODES[country];
-  const [err, setErr] = React.useState(false);
+function CircleFlag({ country, size = 18 }: { country?: string | null; size?: number }) {
+  const [err, setErr] = useState(false);
+  const code = country ? COUNTRY_FLAG_CODES[country] : null;
   if (!code || err) return <span className="text-sm">🌍</span>;
   return (
     <img
       src={`${FLAG_CDN}/${code}.svg`}
-      alt={country}
+      alt={country || "flag"}
       width={size}
       height={size}
       className="rounded-full object-cover shrink-0"
@@ -49,20 +49,25 @@ function CircleFlag({ country, size = 18 }: { country: string; size?: number }) 
   );
 }
 
-function relativeDate(dateStr: string, lang: string): string {
-  const date = new Date(dateStr);
-  const days = Math.floor((Date.now() - date.getTime()) / 86400000);
-  if (days === 0) return lang === "it" ? "Oggi" : lang === "de" ? "Heute" : lang === "fr" ? "Aujourd'hui" : lang === "es" ? "Hoy" : "Today";
-  if (days === 1) return lang === "it" ? "Ieri" : lang === "de" ? "Gestern" : lang === "fr" ? "Hier" : lang === "es" ? "Ayer" : "Yesterday";
-  if (days < 7) return lang === "it" ? `${days} giorni fa` : lang === "de" ? `vor ${days} Tagen` : lang === "fr" ? `il y a ${days} jours` : `${days} days ago`;
-  return date.toLocaleDateString(lang, { day: "numeric", month: "short" });
+function relativeDate(dateStr?: string | null, lang: string = "it"): string {
+  if (!dateStr) return lang === "it" ? "Oggi" : "Today";
+  try {
+    const date = new Date(dateStr);
+    if (isNaN(date.getTime())) return lang === "it" ? "Oggi" : "Today";
+    const days = Math.floor((Date.now() - date.getTime()) / 86400000);
+    if (days <= 0) return lang === "it" ? "Oggi" : lang === "de" ? "Heute" : lang === "fr" ? "Aujourd'hui" : lang === "es" ? "Hoy" : "Today";
+    if (days === 1) return lang === "it" ? "Ieri" : lang === "de" ? "Gestern" : lang === "fr" ? "Hier" : lang === "es" ? "Ayer" : "Yesterday";
+    if (days < 7) return lang === "it" ? `${days} giorni fa` : lang === "de" ? `vor ${days} Tagen` : lang === "fr" ? `il y a ${days} jours` : `${days} days ago`;
+    return date.toLocaleDateString(lang || "it", { day: "numeric", month: "short" });
+  } catch (_) {
+    return lang === "it" ? "Oggi" : "Today";
+  }
 }
-
 
 export function JobCard({ job }: { job: Job }) {
   const { tr, lang } = useLang();
   const catColor = CATEGORY_COLORS[job.category ?? "Altro"] ?? CATEGORY_COLORS.Altro;
-  const hasSalary = job.salaryMin && job.salaryMin > 0;
+  const hasSalary = Boolean(job.salaryMin && job.salaryMin > 0);
   const daysOld = job.createdAt ? Math.floor((Date.now() - new Date(job.createdAt).getTime()) / 86400000) : 999;
   const isNew = daysOld <= 2;
 
@@ -82,7 +87,7 @@ export function JobCard({ job }: { job: Job }) {
             <Link href={`/jobs/${job.id}`}>{job.title}</Link>
           </h3>
           <Badge className={`shrink-0 text-[11px] font-semibold border ${catColor} bg-opacity-80`}>
-            {job.category}
+            {job.category || "Altro"}
           </Badge>
         </div>
 
@@ -95,7 +100,7 @@ export function JobCard({ job }: { job: Job }) {
           )}
           <div className="flex items-center gap-1.5">
             <MapPin className="w-3.5 h-3.5 text-primary/60 shrink-0" />
-            <span className="truncate">{job.city}</span>
+            <span className="truncate">{job.city || "Italia"}</span>
             {job.country && (
               <span className="flex items-center gap-1 ml-1 shrink-0">
                 <CircleFlag country={job.country} size={14} />
@@ -124,7 +129,7 @@ export function JobCard({ job }: { job: Job }) {
       <CardFooter className="px-5 pb-4 pt-3 border-t border-border/40 bg-muted/20 flex justify-between items-center">
         <div className="flex items-center gap-1 text-xs text-muted-foreground">
           <Clock className="w-3.5 h-3.5" />
-          <span>{job.createdAt ? relativeDate(job.createdAt, lang) : "—"}</span>
+          <span>{relativeDate(job.createdAt, lang)}</span>
         </div>
         <Link
           href={`/jobs/${job.id}`}
