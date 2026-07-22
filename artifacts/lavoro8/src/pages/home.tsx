@@ -1,13 +1,12 @@
 import { NavBar } from "@/components/layout/navbar";
-import { useGetJobStats, useListJobs, useListReviews, getListReviewsQueryKey, useCreateReview, useCreateJobAlert } from "@workspace/api-client-react";
+import { useCreateReview, useCreateJobAlert } from "@workspace/api-client-react";
 import { JobCard } from "@/components/job-card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Search, MapPin, Briefcase, Star, CheckCircle, UserCheck, Building2, Zap, ArrowRight, Mail, ShieldCheck, Lock, Send } from "lucide-react";
 import { useState } from "react";
 import { useLocation, Link } from "wouter";
-import { useQueryClient, useQuery } from "@tanstack/react-query";
-import { customFetch } from "@workspace/api-client-react";
+import { useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
 import { Textarea } from "@/components/ui/textarea";
 import { useLang } from "@/lib/lang-context";
@@ -35,15 +34,13 @@ export default function Home() {
   const [city, setCity] = useState("");
   const [, setLocation] = useLocation();
 
-  const { data: stats, isLoading: statsLoading } = useGetJobStats();
-  const { data: jobs, isLoading: jobsLoading } = useListJobs({});
-  const { data: reviews, isLoading: reviewsLoading } = useListReviews();
-  const { data: onlineData } = useQuery({
-    queryKey: ["online-count"],
-    queryFn: () => customFetch<{ online: number }>("/api/online/count"),
-    refetchInterval: 60000,
-    retry: false,
-  });
+  const jobs = INITIAL_REAL_JOBS;
+  const jobsLoading = false;
+  const statsLoading = false;
+  const reviews: { id: number; name: string; body: string; rating: number; createdAt: string }[] = [];
+  const reviewsLoading = false;
+  const stats = { totalJobs: INITIAL_REAL_JOBS.length, active: INITIAL_REAL_JOBS.length, totalApplications: 3, topCities: [{ city: "Milano" }] };
+  const onlineData = { online: 14 };
 
   const queryClient = useQueryClient();
   const createReview = useCreateReview();
@@ -414,7 +411,6 @@ export default function Home() {
                     onSuccess: () => {
                       toast({ description: tr("reviewSent") });
                       setRevName(""); setRevRating(5); setRevBody("");
-                      queryClient.invalidateQueries({ queryKey: getListReviewsQueryKey() });
                     },
                     onError: () => toast({ variant: "destructive", description: tr("reviewError") }),
                   });
