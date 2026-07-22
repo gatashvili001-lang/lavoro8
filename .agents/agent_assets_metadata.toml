@@ -1,0 +1,85 @@
+uploads = []
+
+[[generated]]
+id = "Pg4V40j7K1L2DuOz9pR-h"
+uri = "file://artifacts/lavoro8/src/assets/hero-handshake-dark.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "IwkliuTcVDcTBeTk-ieWO"
+uri = "file://artifacts/lavoro8-tiktok/public/images/warehouse-bg.png"
+type = "image"
+title = "cinematic workers warehouse background"
+
+[[generated]]
+id = "q1Q-4mjpiNh3DSzk5STj0"
+uri = "file://artifacts/lavoro8-tiktok/public/images/atmospheric-bg.png"
+type = "image"
+title = "abstract atmospheric dark navy background"
+
+[[generated]]
+id = "FBH7_7WaupPRQZ550MVEu"
+uri = "file://artifacts/lavoro8-tiktok/public/images/italy-texture.png"
+type = "image"
+title = "italian flag abstract texture"
+
+[[generated]]
+id = "toBet4a4hhIHHv8RRY6_N"
+uri = "file://attached_assets/lavoro8-facebook-cover.png"
+type = "image"
+title = "lavoro8 facebook cover"
+
+[[outputs]]
+id = "3p3sM5YAB8tiaQgT7GnIH"
+uri = "file://artifacts/lavoro8/public/logo-square.png"
+type = "image"
+title = "Lavoro8 ლოგო კვადრატი (PNG)"
+
+[[outputs]]
+id = "CAbVThVf7_Mb-OV2grDQn"
+uri = "file://.local/company-outreach-template.md"
+type = "text"
+title = "კომპანიების მოზიდვის წერილის შაბლონი"
+
+[[outputs]]
+id = "q4vOJYpirkSviDshuFYK6"
+uri = "file://attached_assets/stock_images/hero_handshake_background_1.jpg"
+type = "image"
+title = "professional business handshake two people agreement office bright modern corporate photography"
+
+[[outputs]]
+id = "Rk_pRGa3jLlZbn1azaKrR"
+uri = "file://attached_assets/stock_images/hero_handshake_background_2.jpg"
+type = "image"
+title = "professional business handshake two people agreement office bright modern corporate photography"
+
+[[outputs]]
+id = "P0cf2xdum1ywsh5NsiYLR"
+uri = "file://attached_assets/stock_images/hero_handshake_background_3.jpg"
+type = "image"
+title = "professional business handshake two people agreement office bright modern corporate photography"
+
+[[outputs]]
+id = "WE3UzGVq-N0BHTOtpCVaI"
+uri = "file://attached_assets/stock_images/hero_handshake_background_4.jpg"
+type = "image"
+title = "professional business handshake two people agreement office bright modern corporate photography"
+
+[[outputs]]
+id = "OlMhrn-wYQQZ_4AI4_XiT"
+uri = "file://artifacts/lavoro8-tiktok/public/audio/bg_music.mp3"
+type = "audio"
+title = "background music"
+
+[[outputs]]
+id = "dE9INF3a0NdDDMTSX0L9d"
+uri = "file://artifacts/lavoro8/public/logo.svg"
+type = "image"
+title = "Lavoro8 ლოგო (SVG)"
+
+[[outputs]]
+id = "ELDUQIgMnjG2u4FeuMCNr"
+uri = "file://attached_assets/lavoro8-facebook-cover.png"
+type = "image"
+title = "Lavoro8 Facebook Cover Photo"

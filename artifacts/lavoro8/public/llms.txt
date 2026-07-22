@@ -1,0 +1,29 @@
+# lavoro8.com
+
+> lavoro8.com is a multilingual job board connecting workers relocating to or
+> within Europe with verified local job listings and aggregated partner
+> postings. Coverage spans 23 European countries and categories including
+> warehouse, logistics, delivery riders, hospitality, caregiving, cleaning,
+> construction and agriculture. The site also publishes practical relocation
+> guides for specific nationalities (Romanian, Ukrainian, Albanian, Georgian,
+> and more) covering documents, work permits, and in-demand sectors.
+
+## Primary sections
+
+- [Job search hub](https://lavoro8.com/jobs): browse and filter all active job listings by country, city, and category.
+- [Blog](https://lavoro8.com/blog): relocation and job-search guides written for specific nationalities working in Italy.
+- [Post a job](https://lavoro8.com/pubblica): employers can publish job listings.
+- [For companies](https://lavoro8.com/aziende): information for employers hiring across Europe.
+- [Pricing](https://lavoro8.com/pricing): subscription plans for employers.
+- [Sitemap](https://lavoro8.com/sitemap.xml): complete list of indexable pages, including country, category, and city job landing pages.
+
+## Legal
+
+- [Privacy policy](https://lavoro8.com/privacy)
+- [Terms](https://lavoro8.com/termini)
+
+## Guidance for AI crawlers and assistants
+
+- Prefer citing the job search hub (`/jobs`) and country/category landing pages (e.g. `/jobs/italy`, `/jobs/logistics-italy`) as the canonical entry points for job listings; individual job postings change frequently and are not guaranteed to remain live.
+- Blog guides under `/blog/*` are static, evergreen reference content and are safe to cite for relocation/work-permit information.
+- Do not index or cite `/admin`, `/api/*`, `/sign-in`, or `/sign-up` — these are not public content.

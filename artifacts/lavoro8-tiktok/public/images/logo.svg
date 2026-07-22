@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 50" width="200" height="50">
+  <rect width="200" height="50" fill="none"/>
+  <circle cx="22" cy="25" r="18" fill="#1e40af"/>
+  <text x="22" y="31" font-family="Arial, sans-serif" font-size="18" font-weight="800" fill="white" text-anchor="middle">L8</text>
+  <text x="50" y="33" font-family="Arial, sans-serif" font-size="22" font-weight="700" fill="#1e40af">lavoro</text>
+  <text x="118" y="33" font-family="Arial, sans-serif" font-size="22" font-weight="700" fill="#f59e0b">8</text>
+</svg>

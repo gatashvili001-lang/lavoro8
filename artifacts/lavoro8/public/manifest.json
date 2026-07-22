@@ -1,0 +1,21 @@
+{
+  "name": "lavoro8.com",
+  "short_name": "lavoro8.com",
+  "description": "Bacheca lavoro italiana per operai, magazzinieri, rider, camerieri e addetti hotel.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#fafaf8",
+  "theme_color": "#1d4ed8",
+  "orientation": "portrait-primary",
+  "lang": "it",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "type": "image/svg+xml",
+      "sizes": "any",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["business", "productivity"],
+  "screenshots": []
+}

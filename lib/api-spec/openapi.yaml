@@ -1,0 +1,519 @@
+openapi: 3.1.0
+info:
+  title: Api
+  version: 0.1.0
+  description: Lavoro8 API - Italian job board
+servers:
+  - url: /api
+    description: Base API path
+tags:
+  - name: health
+    description: Health operations
+  - name: jobs
+    description: Job listings
+  - name: applications
+    description: Job applications
+  - name: reviews
+    description: Site reviews
+  - name: admin
+    description: Admin operations
+paths:
+  /healthz:
+    get:
+      operationId: healthCheck
+      tags: [health]
+      summary: Health check
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+
+  /jobs:
+    get:
+      operationId: listJobs
+      tags: [jobs]
+      summary: List all job listings
+      parameters:
+        - name: city
+          in: query
+          schema:
+            type: string
+        - name: category
+          in: query
+          schema:
+            type: string
+        - name: search
+          in: query
+          schema:
+            type: string
+        - name: country
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of jobs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Job"
+    post:
+      operationId: createJob
+      tags: [jobs]
+      summary: Create a new job listing
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/JobInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Job"
+
+  /jobs/stats:
+    get:
+      operationId: getJobStats
+      tags: [jobs]
+      summary: Get job board statistics
+      responses:
+        "200":
+          description: Stats
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/JobStats"
+
+  /jobs/{id}:
+    get:
+      operationId: getJob
+      tags: [jobs]
+      summary: Get a job listing
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Job found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Job"
+        "404":
+          description: Not found
+    delete:
+      operationId: deleteJob
+      tags: [jobs]
+      summary: Delete a job listing
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /jobs/{id}/apply:
+    post:
+      operationId: applyToJob
+      tags: [applications]
+      summary: Apply to a job
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ApplicationInput"
+      responses:
+        "201":
+          description: Application submitted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Application"
+
+  /job-alerts:
+    post:
+      operationId: createJobAlert
+      tags: [jobs]
+      summary: Subscribe to job alerts
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/JobAlertInput"
+      responses:
+        "201":
+          description: Subscribed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/JobAlert"
+
+  /applications:
+    get:
+      operationId: listApplications
+      tags: [applications]
+      summary: List all applications
+      responses:
+        "200":
+          description: List of applications
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Application"
+
+  /reviews:
+    get:
+      operationId: listReviews
+      tags: [reviews]
+      summary: List approved reviews
+      responses:
+        "200":
+          description: List of approved reviews
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Review"
+    post:
+      operationId: createReview
+      tags: [reviews]
+      summary: Submit a new review
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReviewInput"
+      responses:
+        "201":
+          description: Review submitted (pending approval)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Review"
+
+  /admin/reviews:
+    get:
+      operationId: adminListReviews
+      tags: [admin]
+      summary: List all reviews (including unapproved)
+      responses:
+        "200":
+          description: All reviews
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Review"
+
+  /admin/reviews/{id}/approve:
+    post:
+      operationId: approveReview
+      tags: [admin]
+      summary: Approve a review
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Approved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Review"
+
+  /admin/reviews/{id}:
+    delete:
+      operationId: deleteReview
+      tags: [admin]
+      summary: Delete a review
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /contact:
+    post:
+      operationId: createContactMessage
+      tags: [contact]
+      summary: Send a contact message
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ContactMessageInput"
+      responses:
+        "201":
+          description: Message sent
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ContactMessage"
+
+  /admin/contact-messages:
+    get:
+      operationId: listContactMessages
+      tags: [admin]
+      summary: List all contact messages
+      responses:
+        "200":
+          description: All contact messages
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ContactMessage"
+
+components:
+  schemas:
+    HealthStatus:
+      type: object
+      properties:
+        status:
+          type: string
+      required:
+        - status
+
+    Job:
+      type: object
+      required: [id, title, city, category, salaryMin, salaryMax, description, createdAt]
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        city:
+          type: string
+        country:
+          type: ["string", "null"]
+        category:
+          type: string
+        salaryMin:
+          type: integer
+        salaryMax:
+          type: integer
+        description:
+          type: string
+        company:
+          type: ["string", "null"]
+        contractType:
+          type: ["string", "null"]
+        featured:
+          type: boolean
+        createdAt:
+          type: string
+
+    JobInput:
+      type: object
+      required: [title, city, category, salaryMin, salaryMax, description]
+      properties:
+        title:
+          type: string
+        city:
+          type: string
+        country:
+          type: string
+        category:
+          type: string
+        salaryMin:
+          type: integer
+        salaryMax:
+          type: integer
+        description:
+          type: string
+        company:
+          type: string
+        contractType:
+          type: string
+        featured:
+          type: boolean
+
+    JobAlert:
+      type: object
+      required: [id, email, createdAt]
+      properties:
+        id:
+          type: integer
+        email:
+          type: string
+        country:
+          type: ["string", "null"]
+        category:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+
+    JobAlertInput:
+      type: object
+      required: [email]
+      properties:
+        email:
+          type: string
+        country:
+          type: string
+        category:
+          type: string
+
+    ContactMessage:
+      type: object
+      required: [id, name, email, message, createdAt]
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        email:
+          type: string
+        message:
+          type: string
+        read:
+          type: boolean
+        createdAt:
+          type: string
+
+    ContactMessageInput:
+      type: object
+      required: [name, email, message]
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        message:
+          type: string
+
+    JobStats:
+      type: object
+      required: [totalJobs, totalApplications, jobsByCategory, topCities]
+      properties:
+        totalJobs:
+          type: integer
+        totalApplications:
+          type: integer
+        jobsByCategory:
+          type: array
+          items:
+            $ref: "#/components/schemas/CategoryCount"
+        topCities:
+          type: array
+          items:
+            $ref: "#/components/schemas/CityCount"
+
+    CategoryCount:
+      type: object
+      required: [category, count]
+      properties:
+        category:
+          type: string
+        count:
+          type: integer
+
+    CityCount:
+      type: object
+      required: [city, count]
+      properties:
+        city:
+          type: string
+        count:
+          type: integer
+
+    Application:
+      type: object
+      required: [id, jobId, name, email, createdAt]
+      properties:
+        id:
+          type: integer
+        jobId:
+          type: integer
+        name:
+          type: string
+        email:
+          type: string
+        phone:
+          type: ["string", "null"]
+        message:
+          type: ["string", "null"]
+        cvUrl:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+
+    ApplicationInput:
+      type: object
+      required: [name, email]
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        phone:
+          type: string
+        message:
+          type: string
+        cvUrl:
+          type: string
+
+    Review:
+      type: object
+      required: [id, name, rating, body, approved, createdAt]
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        rating:
+          type: integer
+        body:
+          type: string
+        approved:
+          type: boolean
+        createdAt:
+          type: string
+
+    ReviewInput:
+      type: object
+      required: [name, rating, body]
+      properties:
+        name:
+          type: string
+        rating:
+          type: integer
+        body:
+          type: string

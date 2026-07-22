@@ -1,0 +1,7 @@
+---
+name: Prod-only blank screen — diagnosis path and root causes
+description: Published app blank while dev works; how to actually find the crash instead of guessing
+---
+**Rule:** For "published app blank, dev fine": if the HAR shows all JS chunks 200 but ZERO /api or Clerk requests, the bundle is crashing at module-eval. Don't guess — download the deployed chunks and execute the entry chunk in a Node browser-shim (fake window/document/navigator via defineProperty) to capture the real exception. Reaching React error #299 (createRoot target missing) in the shim = init is healthy.
+**Why:** Jul 2026: blamed Clerk first (middleware had genuinely diverged from canonical and was re-synced — a real but separate fix). Actual white-screen cause was a custom `rollupOptions.output.manualChunks` in lavoro8's vite.config.ts (added by an SEO task) creating a circular chunk import (vendor ↔ vendor-react) → "Cannot set properties of undefined (setting 'Children')" during React init. Prod-only because dev doesn't chunk.
+**How to apply:** Never add bespoke per-package manualChunks splits (react/clerk/radix cross-import heavily → cycles). Keep Vite default chunking. Also keep clerkProxyMiddleware synced to the canonical skill template (chunked responses → Cloud Run edge 500s / healthcheck 500s). The Playwright testing subagent silently lands on the dev preview even when given the external prod URL ("[vite] connecting" in console = wrong target); don't trust its console reports for prod.

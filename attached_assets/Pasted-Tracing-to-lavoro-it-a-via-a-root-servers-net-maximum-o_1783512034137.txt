@@ -1,0 +1,90 @@
+Tracing to lavoro.it[a] via a.root-servers.net., maximum of 1 retries
+a.root-servers.net. (198.41.0.4)
+ |\___ r.dns.it [it] (2001:0760:ffff:ffff:0000:0000:0000:00ca) Not queried
+ |\___ r.dns.it [it] (193.206.141.46)
+ |     |\___ isla.ns.cloudflare.com [lavoro.it] (172.64.32.119) Got authoritative answer
+ |     |\___ isla.ns.cloudflare.com [lavoro.it] (108.162.192.119) Got authoritative answer
+ |     |\___ isla.ns.cloudflare.com [lavoro.it] (173.245.58.119) Got authoritative answer
+ |     |\___ isla.ns.cloudflare.com [lavoro.it] (2803:f800:0050:0000:0000:0000:6ca2:c077) Not queried
+ |     |\___ isla.ns.cloudflare.com [lavoro.it] (2a06:98c1:0050:0000:0000:0000:ac40:2077) Not queried
+ |     |\___ isla.ns.cloudflare.com [lavoro.it] (2606:4700:0050:0000:0000:0000:adf5:3a77) Not queried
+ |      \___ amir.ns.cloudflare.com [lavoro.it] (172.64.33.62) Got authoritative answer
+ |      \___ amir.ns.cloudflare.com [lavoro.it] (173.245.59.62) Got authoritative answer
+ |      \___ amir.ns.cloudflare.com [lavoro.it] (108.162.193.62) Got authoritative answer
+ |      \___ amir.ns.cloudflare.com [lavoro.it] (2803:f800:0050:0000:0000:0000:6ca2:c13e) Not queried
+ |      \___ amir.ns.cloudflare.com [lavoro.it] (2a06:98c1:0050:0000:0000:0000:ac40:213e) Not queried
+ |      \___ amir.ns.cloudflare.com [lavoro.it] (2606:4700:0058:0000:0000:0000:adf5:3b3e) Not queried
+ |\___ nameserver.cnr.it [it] (2a00:1620:00c0:0220:0194:0119:0192:0034) Not queried
+ |\___ nameserver.cnr.it [it] (194.119.192.34)
+ |     |\___ amir.ns.cloudflare.com [lavoro.it] (172.64.33.62) (cached)
+ |     |\___ amir.ns.cloudflare.com [lavoro.it] (173.245.59.62) (cached)
+ |     |\___ amir.ns.cloudflare.com [lavoro.it] (108.162.193.62) (cached)
+ |     |\___ amir.ns.cloudflare.com [lavoro.it] (2803:f800:0050:0000:0000:0000:6ca2:c13e) Not queried
+ |     |\___ amir.ns.cloudflare.com [lavoro.it] (2606:4700:0058:0000:0000:0000:adf5:3b3e) Not queried
+ |     |\___ amir.ns.cloudflare.com [lavoro.it] (2a06:98c1:0050:0000:0000:0000:ac40:213e) Not queried
+ |      \___ isla.ns.cloudflare.com [lavoro.it] (173.245.58.119) (cached)
+ |      \___ isla.ns.cloudflare.com [lavoro.it] (108.162.192.119) (cached)
+ |      \___ isla.ns.cloudflare.com [lavoro.it] (172.64.32.119) (cached)
+ |      \___ isla.ns.cloudflare.com [lavoro.it] (2803:f800:0050:0000:0000:0000:6ca2:c077) Not queried
+ |      \___ isla.ns.cloudflare.com [lavoro.it] (2606:4700:0050:0000:0000:0000:adf5:3a77) Not queried
+ |      \___ isla.ns.cloudflare.com [lavoro.it] (2a06:98c1:0050:0000:0000:0000:ac40:2077) Not queried
+ |\___ v.dns.it [it] (2001:0678:0020:0000:0000:0000:0000:0044) Not queried
+ |\___ v.dns.it [it] (194.0.25.44)
+ |     |\___ isla.ns.cloudflare.com [lavoro.it] (108.162.192.119) (cached)
+ |     |\___ isla.ns.cloudflare.com [lavoro.it] (172.64.32.119) (cached)
+ |     |\___ isla.ns.cloudflare.com [lavoro.it] (173.245.58.119) (cached)
+ |     |\___ isla.ns.cloudflare.com [lavoro.it] (2a06:98c1:0050:0000:0000:0000:ac40:2077) Not queried
+ |     |\___ isla.ns.cloudflare.com [lavoro.it] (2606:4700:0050:0000:0000:0000:adf5:3a77) Not queried
+ |     |\___ isla.ns.cloudflare.com [lavoro.it] (2803:f800:0050:0000:0000:0000:6ca2:c077) Not queried
+ |      \___ amir.ns.cloudflare.com [lavoro.it] (173.245.59.62) (cached)
+ |      \___ amir.ns.cloudflare.com [lavoro.it] (172.64.33.62) (cached)
+ |      \___ amir.ns.cloudflare.com [lavoro.it] (108.162.193.62) (cached)
+ |      \___ amir.ns.cloudflare.com [lavoro.it] (2606:4700:0058:0000:0000:0000:adf5:3b3e) Not queried
+ |      \___ amir.ns.cloudflare.com [lavoro.it] (2a06:98c1:0050:0000:0000:0000:ac40:213e) Not queried
+ |      \___ amir.ns.cloudflare.com [lavoro.it] (2803:f800:0050:0000:0000:0000:6ca2:c13e) Not queried
+ |\___ dns.nic.it [it] (2a00:0d40:0001:0001:0000:0000:0000:0005) Not queried
+ |\___ dns.nic.it [it] (192.12.192.5)
+ |     |\___ isla.ns.cloudflare.com [lavoro.it] (172.64.32.119) (cached)
+ |     |\___ isla.ns.cloudflare.com [lavoro.it] (173.245.58.119) (cached)
+ |     |\___ isla.ns.cloudflare.com [lavoro.it] (108.162.192.119) (cached)
+ |     |\___ isla.ns.cloudflare.com [lavoro.it] (2606:4700:0050:0000:0000:0000:adf5:3a77) Not queried
+ |     |\___ isla.ns.cloudflare.com [lavoro.it] (2803:f800:0050:0000:0000:0000:6ca2:c077) Not queried
+ |     |\___ isla.ns.cloudflare.com [lavoro.it] (2a06:98c1:0050:0000:0000:0000:ac40:2077) Not queried
+ |      \___ amir.ns.cloudflare.com [lavoro.it] (108.162.193.62) (cached)
+ |      \___ amir.ns.cloudflare.com [lavoro.it] (173.245.59.62) (cached)
+ |      \___ amir.ns.cloudflare.com [lavoro.it] (172.64.33.62) (cached)
+ |      \___ amir.ns.cloudflare.com [lavoro.it] (2a06:98c1:0050:0000:0000:0000:ac40:213e) Not queried
+ |      \___ amir.ns.cloudflare.com [lavoro.it] (2606:4700:0058:0000:0000:0000:adf5:3b3e) Not queried
+ |      \___ amir.ns.cloudflare.com [lavoro.it] (2803:f800:0050:0000:0000:0000:6ca2:c13e) Not queried
+ |\___ m.dns.it [it] (2001:1ac0:0000:0200:0000:a5d1:6004:0002) Not queried
+ |\___ m.dns.it [it] (217.29.76.4)
+ |     |\___ isla.ns.cloudflare.com [lavoro.it] (172.64.32.119) (cached)
+ |     |\___ isla.ns.cloudflare.com [lavoro.it] (173.245.58.119) (cached)
+ |     |\___ isla.ns.cloudflare.com [lavoro.it] (108.162.192.119) (cached)
+ |     |\___ isla.ns.cloudflare.com [lavoro.it] (2803:f800:0050:0000:0000:0000:6ca2:c077) Not queried
+ |     |\___ isla.ns.cloudflare.com [lavoro.it] (2606:4700:0050:0000:0000:0000:adf5:3a77) Not queried
+ |     |\___ isla.ns.cloudflare.com [lavoro.it] (2a06:98c1:0050:0000:0000:0000:ac40:2077) Not queried
+ |      \___ amir.ns.cloudflare.com [lavoro.it] (172.64.33.62) (cached)
+ |      \___ amir.ns.cloudflare.com [lavoro.it] (108.162.193.62) (cached)
+ |      \___ amir.ns.cloudflare.com [lavoro.it] (173.245.59.62) (cached)
+ |      \___ amir.ns.cloudflare.com [lavoro.it] (2803:f800:0050:0000:0000:0000:6ca2:c13e) Not queried
+ |      \___ amir.ns.cloudflare.com [lavoro.it] (2a06:98c1:0050:0000:0000:0000:ac40:213e) Not queried
+ |      \___ amir.ns.cloudflare.com [lavoro.it] (2606:4700:0058:0000:0000:0000:adf5:3b3e) Not queried
+ |\___ a.dns.it [it] (2001:0678:0012:0000:0194:0000:0016:0215) Not queried
+  \___ a.dns.it [it] (194.0.16.215)
+       |\___ isla.ns.cloudflare.com [lavoro.it] (108.162.192.119) (cached)
+       |\___ isla.ns.cloudflare.com [lavoro.it] (172.64.32.119) (cached)
+       |\___ isla.ns.cloudflare.com [lavoro.it] (173.245.58.119) (cached)
+       |\___ isla.ns.cloudflare.com [lavoro.it] (2606:4700:0050:0000:0000:0000:adf5:3a77) Not queried
+       |\___ isla.ns.cloudflare.com [lavoro.it] (2a06:98c1:0050:0000:0000:0000:ac40:2077) Not queried
+       |\___ isla.ns.cloudflare.com [lavoro.it] (2803:f800:0050:0000:0000:0000:6ca2:c077) Not queried
+        \___ amir.ns.cloudflare.com [lavoro.it] (172.64.33.62) (cached)
+        \___ amir.ns.cloudflare.com [lavoro.it] (108.162.193.62) (cached)
+        \___ amir.ns.cloudflare.com [lavoro.it] (173.245.59.62) (cached)
+        \___ amir.ns.cloudflare.com [lavoro.it] (2803:f800:0050:0000:0000:0000:6ca2:c13e) Not queried
+        \___ amir.ns.cloudflare.com [lavoro.it] (2606:4700:0058:0000:0000:0000:adf5:3b3e) Not queried
+        \___ amir.ns.cloudflare.com [lavoro.it] (2a06:98c1:0050:0000:0000:0000:ac40:213e) Not queried
+
+Domain Queried : lavoro.it
+
+ns1.afraid.org not found in nameserver list.  

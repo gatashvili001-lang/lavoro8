@@ -1,0 +1,31 @@
+kind = "video"
+previewPath = "/lavoro8-tiktok/"
+title = "Lavoro8 TikTok Video"
+version = "1.0.0"
+id = "artifacts/lavoro8-tiktok"
+router = "path"
+
+[[integratedSkills]]
+name = "video-js"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/lavoro8-tiktok/" ]
+localPort = 23394
+
+[services.development]
+run = "pnpm --filter @workspace/lavoro8-tiktok run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/lavoro8-tiktok", "run", "build" ]
+publicDir = "artifacts/lavoro8-tiktok/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "23394"
+BASE_PATH = "/lavoro8-tiktok/"
