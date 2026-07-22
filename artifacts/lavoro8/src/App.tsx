@@ -7,6 +7,7 @@ import { Switch, Route, useLocation, Router as WouterRouter } from "wouter";
 import { QueryClient, QueryClientProvider, useQueryClient } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { Analytics } from "@vercel/analytics/react";
 
 import Home from "@/pages/home";
 import { CookieBanner } from "@/components/cookie-banner";
@@ -263,6 +264,7 @@ function App() {
     <LangProvider>
       <WouterRouter base={basePath}>
         <ClerkProviderWithRoutes />
+        <Analytics />
       </WouterRouter>
     </LangProvider>
   );
