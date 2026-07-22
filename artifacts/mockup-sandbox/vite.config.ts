@@ -1,27 +1,14 @@
+process.env.PORT = process.env.PORT || "5002";
+process.env.BASE_PATH = process.env.BASE_PATH || "/";
+
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import path from "path";
 import { mockupPreviewPlugin } from "./mockupPreviewPlugin";
 
-let port = 5002;
-try {
-  if (process.env.PORT && process.env.PORT !== "undefined") {
-    const p = Number(process.env.PORT);
-    if (!isNaN(p) && p > 0) port = p;
-  }
-} catch {
-  port = 5002;
-}
-
-let basePath = "/";
-try {
-  if (process.env.BASE_PATH && process.env.BASE_PATH !== "undefined") {
-    basePath = process.env.BASE_PATH;
-  }
-} catch {
-  basePath = "/";
-}
+const port = Number(process.env.PORT) || 5002;
+const basePath = process.env.BASE_PATH || "/";
 
 export default defineConfig({
   base: basePath,
@@ -42,6 +29,7 @@ export default defineConfig({
   },
   server: {
     port,
+    strictPort: false,
     host: "0.0.0.0",
     allowedHosts: true,
     fs: {

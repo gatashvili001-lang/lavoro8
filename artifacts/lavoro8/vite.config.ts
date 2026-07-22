@@ -1,3 +1,6 @@
+process.env.PORT = process.env.PORT || "5001";
+process.env.BASE_PATH = process.env.BASE_PATH || "/";
+
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
