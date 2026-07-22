@@ -11,6 +11,7 @@ import { customFetch } from "@workspace/api-client-react";
 import { useToast } from "@/hooks/use-toast";
 import { Textarea } from "@/components/ui/textarea";
 import { useLang } from "@/lib/lang-context";
+import { INITIAL_REAL_JOBS } from "@/lib/initial-jobs";
 import { COUNTRY_SLUGS, CATEGORY_SLUGS, MAJOR_COUNTRY_SLUGS, comboSlug, CATEGORY_SLUG_LABEL_KEYS } from "@/lib/seo-slugs";
 import heroBackground from "@/assets/hero-handshake-dark.jpg";
 
@@ -263,11 +264,11 @@ export default function Home() {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
                 {[1,2,3].map(i => <div key={i} className="h-44 bg-muted rounded-xl animate-pulse" />)}
               </div>
-            ) : jobs && jobs.length > 0 ? (
+            ) : (
               <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-                {jobs.slice(0, 3).map(job => <JobCard key={job.id} job={job} />)}
+                {(jobs && jobs.length > 0 ? jobs : INITIAL_REAL_JOBS).slice(0, 6).map(job => <JobCard key={job.id} job={job} />)}
               </div>
-            ) : null}
+            )}
 
             <div className="text-center mt-8 flex gap-3 justify-center">
               <Button asChild size="lg">
