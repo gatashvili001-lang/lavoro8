@@ -1,4 +1,5 @@
-import { useGetJob, useApplyToJob, getGetJobQueryKey, useListJobs } from "@workspace/api-client-react";
+import { useGetJob, useApplyToJob, getGetJobQueryKey } from "@workspace/api-client-react";
+import { INITIAL_REAL_JOBS } from "@/lib/initial-jobs";
 import { useParams, Link, useLocation } from "wouter";
 import { NavBar } from "@/components/layout/navbar";
 import { formatCurrency, formatDate } from "@/lib/format";
@@ -111,7 +112,7 @@ export default function JobDetailPage() {
   });
 
   const applyMutation = useApplyToJob();
-  const { data: allJobs } = useListJobs({});
+  const allJobs = INITIAL_REAL_JOBS;
 
   useSeo({
     title: job ? `${job.title} — ${job.city}` : tr("jobNotFoundSeo"),
@@ -328,9 +329,9 @@ export default function JobDetailPage() {
   );
 
   const hasSalary = job.salaryMin && job.salaryMin > 0;
-  const similarJobs = allJobs
-    ?.filter(j => j.id !== job.id && j.category === job.category)
-    .slice(0, 3) ?? [];
+  const similarJobs = Array.isArray(allJobs)
+    ? allJobs.filter(j => j.id !== job.id && j.category === job.category).slice(0, 3)
+    : [];
   const jobIsNew = isNew(job.createdAt);
   const dateLabel = relativeDate(job.createdAt, lang);
 

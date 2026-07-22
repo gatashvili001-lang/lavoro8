@@ -16,12 +16,12 @@ import {
   getAdminListReviewsQueryKey,
   useApproveReview,
   useDeleteReview,
-  useListJobs,
   getListJobsQueryKey,
   useDeleteJob,
   useGetJobStats,
   useListContactMessages,
 } from "@workspace/api-client-react";
+import { INITIAL_REAL_JOBS } from "@/lib/initial-jobs";
 
 export default function AdminPage() {
   const [password, setPassword] = useState("");
@@ -236,7 +236,8 @@ function AdminDashboard() {
   
   const { data: applications, isLoading: appsLoading } = useListApplications();
   const { data: reviews, isLoading: reviewsLoading } = useAdminListReviews();
-  const { data: jobs, isLoading: jobsLoading } = useListJobs();
+  const jobs = INITIAL_REAL_JOBS;
+  const jobsLoading = false;
   const { data: stats } = useGetJobStats();
   const { data: contactMessages, isLoading: contactLoading } = useListContactMessages();
 
