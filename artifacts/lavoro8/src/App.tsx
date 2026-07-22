@@ -50,10 +50,10 @@ const queryClient = new QueryClient({
   },
 });
 
-const clerkPubKey = publishableKeyFromHost(
-  window.location.hostname,
-  import.meta.env.VITE_CLERK_PUBLISHABLE_KEY,
-);
+const rawClerkKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY || "pk_test_ZGV2ZWxvcG1lbnQtY2xlcmsuY29tJA";
+const clerkPubKey = (typeof window !== "undefined"
+  ? publishableKeyFromHost(window.location.hostname, rawClerkKey)
+  : rawClerkKey) || rawClerkKey;
 
 const clerkProxyUrl = import.meta.env.VITE_CLERK_PROXY_URL;
 const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
@@ -62,10 +62,6 @@ function stripBase(path: string): string {
   return basePath && path.startsWith(basePath)
     ? path.slice(basePath.length) || "/"
     : path;
-}
-
-if (!clerkPubKey) {
-  throw new Error("Chiave Clerk mancante: VITE_CLERK_PUBLISHABLE_KEY");
 }
 
 const clerkAppearance = {
