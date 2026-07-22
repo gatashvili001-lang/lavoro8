@@ -1,7 +1,7 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": "vite",
-  "buildCommand": "npx vite build --config vite.config.ts && npx tsx scripts/generate-sitemap.ts && npx tsx scripts/prerender.ts",
+  "buildCommand": "vite build",
   "outputDirectory": "dist/public",
   "env": {
     "PORT": "5001"
