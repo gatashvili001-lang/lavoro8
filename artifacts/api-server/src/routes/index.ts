@@ -11,6 +11,7 @@ import stripeCheckoutRouter from "./stripe-checkout";
 import applicationsRouter from "./applications";
 import onlineRouter from "./online";
 import seedBatch8Router from "./seed-batch8";
+import jobBotRouter from "./job-bot";
 
 const router: IRouter = Router();
 
@@ -26,5 +27,6 @@ router.use(paddleRouter);
 router.use(stripeCheckoutRouter);
 router.use(onlineRouter);
 router.use(seedBatch8Router);
+router.use(jobBotRouter);
 
 export default router;
