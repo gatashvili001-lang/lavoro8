@@ -11,6 +11,7 @@ import { useLang } from "@/lib/lang-context";
 import { COUNTRY_SLUGS, CATEGORY_SLUGS, CITY_LANDING_PAGES, MAJOR_COUNTRY_SLUGS, comboSlug, CATEGORY_SLUG_LABEL_KEYS } from "@/lib/seo-slugs";
 import NotFound from "@/pages/not-found";
 import { useSeo } from "@/lib/use-seo";
+import { INITIAL_REAL_JOBS } from "@/lib/initial-jobs";
 
 const BASE_URL = import.meta.env.BASE_URL.replace(/\/$/, "");
 const FLAG_CDN = "https://hatscripts.github.io/circle-flags/flags";
@@ -60,7 +61,13 @@ export function JobsLandingContent({
     category: category || undefined,
   });
 
-  const localJobs = localJobsRaw ?? [];
+  const baseLocal = (localJobsRaw && localJobsRaw.length > 0) ? localJobsRaw : INITIAL_REAL_JOBS;
+  const localJobs = baseLocal.filter(j => {
+    if (countryCode && countryCode !== "ALL" && j.country !== countryCode) return false;
+    if (city && !j.city.toLowerCase().includes(city.toLowerCase())) return false;
+    if (category && j.category !== category) return false;
+    return true;
+  });
   const externalJobs = (extData?.data ?? []).filter(
     (j) => !city || (j.location || (j as any).city)?.toLowerCase().includes(city.toLowerCase())
   );

@@ -12,6 +12,7 @@ import { Link, useSearch } from "wouter";
 import { COUNTRY_SLUGS, CATEGORY_SLUGS, CATEGORY_SLUG_LABEL_KEYS } from "@/lib/seo-slugs";
 import { CITIES_BY_COUNTRY } from "@/lib/cities";
 import { useSeo } from "@/lib/use-seo";
+import { INITIAL_REAL_JOBS } from "@/lib/initial-jobs";
 
 const BASE_URL = import.meta.env.BASE_URL.replace(/\/$/, "");
 const FLAG_CDN = "https://hatscripts.github.io/circle-flags/flags";
@@ -168,7 +169,16 @@ export default function JobsPage() {
     category: category !== "Tutte" ? category : undefined,
   });
 
-  const localJobs = [...(localJobsRaw ?? [])].sort((a, b) => {
+  const baseLocalList = (localJobsRaw && localJobsRaw.length > 0) ? localJobsRaw : INITIAL_REAL_JOBS;
+  const filteredLocalJobs = baseLocalList.filter(j => {
+    if (category && category !== "Tutte" && j.category !== category) return false;
+    if (country && country !== "ALL" && j.country !== country) return false;
+    if (city && !j.city.toLowerCase().includes(city.toLowerCase())) return false;
+    if (search && !j.title.toLowerCase().includes(search.toLowerCase()) && !j.description.toLowerCase().includes(search.toLowerCase())) return false;
+    return true;
+  });
+
+  const localJobs = [...filteredLocalJobs].sort((a, b) => {
     if (sort === "salary_desc") return (b.salaryMax ?? 0) - (a.salaryMax ?? 0);
     if (sort === "salary_asc") {
       const aMin = a.salaryMin ?? 0;
