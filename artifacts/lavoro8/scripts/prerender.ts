@@ -5,7 +5,7 @@ import { BLOG_POSTS } from "../src/lib/blog-posts";
 import { LANGUAGES } from "../src/lib/i18n";
 
 const SITE_URL = "https://lavoro8.com";
-const OUT_DIR = path.resolve(import.meta.dirname, "..", "dist", "public");
+const OUT_DIR = path.resolve(import.meta.dirname, "..", "dist");
 const TEMPLATE_PATH = path.join(OUT_DIR, "index.html");
 
 type RouteMeta = {

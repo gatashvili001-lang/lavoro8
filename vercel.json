@@ -2,7 +2,7 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": "vite",
   "buildCommand": "pnpm --filter @workspace/lavoro8 run build",
-  "outputDirectory": "artifacts/lavoro8/dist/public",
+  "outputDirectory": "artifacts/lavoro8/dist",
   "installCommand": "pnpm install",
   "env": {
     "PORT": "5001"
