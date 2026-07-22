@@ -4,14 +4,14 @@ import { NavBar } from "@/components/layout/navbar";
 import { JobCard } from "@/components/job-card";
 import { ExternalJobCard, ExternalJob } from "@/components/external-job-card";
 import { Button } from "@/components/ui/button";
-import { useListJobs } from "@workspace/api-client-react";
+
 import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft, MapPin } from "lucide-react";
 import { useLang } from "@/lib/lang-context";
 import { COUNTRY_SLUGS, CATEGORY_SLUGS, CITY_LANDING_PAGES, MAJOR_COUNTRY_SLUGS, comboSlug, CATEGORY_SLUG_LABEL_KEYS } from "@/lib/seo-slugs";
 import NotFound from "@/pages/not-found";
 import { useSeo } from "@/lib/use-seo";
-import { INITIAL_REAL_JOBS } from "@/lib/initial-jobs";
+import { INITIAL_REAL_JOBS, safeFilter } from "@/lib/initial-jobs";
 
 const BASE_URL = import.meta.env.BASE_URL.replace(/\/$/, "");
 const FLAG_CDN = "https://hatscripts.github.io/circle-flags/flags";
@@ -49,29 +49,16 @@ export function JobsLandingContent({
   path?: string;
 }) {
   const { tr } = useLang();
-
-  const { data: localJobsRaw, isLoading: localLoading } = useListJobs({
-    country: countryCode,
-    city: city || undefined,
-    category: category || undefined,
-  });
-
   const { data: extData, isLoading: extLoading } = useExternalJobs({
     country: countryCode,
     category: category || undefined,
   });
 
-  const baseLocal = (localJobsRaw && localJobsRaw.length > 0) ? localJobsRaw : INITIAL_REAL_JOBS;
-  const localJobs = baseLocal.filter(j => {
-    if (countryCode && countryCode !== "ALL" && j.country !== countryCode) return false;
-    if (city && !j.city.toLowerCase().includes(city.toLowerCase())) return false;
-    if (category && j.category !== category) return false;
-    return true;
-  });
-  const externalJobs = (extData?.data ?? []).filter(
-    (j) => !city || (j.location || (j as any).city)?.toLowerCase().includes(city.toLowerCase())
-  );
-  const isLoading = localLoading || extLoading;
+  const localJobs = safeFilter(INITIAL_REAL_JOBS, { country: countryCode, city, category });
+  const externalJobs = Array.isArray(extData?.data) ? (extData!.data).filter(
+    (j) => !city || (j.location || (j as any).city || "")?.toLowerCase().includes(city.toLowerCase())
+  ) : [];
+  const isLoading = extLoading;
   const total = localJobs.length + externalJobs.length;
 
   const heading = [category, tr("seoJobsIn"), city ? `${city}, ${countryLabel}` : countryLabel]

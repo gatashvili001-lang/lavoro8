@@ -1,5 +1,5 @@
 import { NavBar } from "@/components/layout/navbar";
-import { useListJobs, useCreateJobAlert } from "@workspace/api-client-react";
+import { useCreateJobAlert } from "@workspace/api-client-react";
 import { JobCard } from "@/components/job-card";
 import { ExternalJobCard, ExternalJob } from "@/components/external-job-card";
 import { Input } from "@/components/ui/input";
@@ -12,7 +12,7 @@ import { Link, useSearch } from "wouter";
 import { COUNTRY_SLUGS, CATEGORY_SLUGS, CATEGORY_SLUG_LABEL_KEYS } from "@/lib/seo-slugs";
 import { CITIES_BY_COUNTRY } from "@/lib/cities";
 import { useSeo } from "@/lib/use-seo";
-import { INITIAL_REAL_JOBS } from "@/lib/initial-jobs";
+import { INITIAL_REAL_JOBS, safeFilter } from "@/lib/initial-jobs";
 
 const BASE_URL = import.meta.env.BASE_URL.replace(/\/$/, "");
 const FLAG_CDN = "https://hatscripts.github.io/circle-flags/flags";
@@ -156,12 +156,8 @@ export default function JobsPage() {
     window.history.replaceState(null, "", `/jobs${params.toString() ? `?${params.toString()}` : ""}`);
   }, [search, city, category, country]);
 
-  const { data: localJobsRaw, isLoading: localLoading } = useListJobs({
-    search: search || undefined,
-    city: city || undefined,
-    category: category !== "Tutte" ? category : undefined,
-    country: country !== "ALL" ? country : undefined,
-  });
+  const localJobsRaw = INITIAL_REAL_JOBS;
+  const localLoading = false;
 
   const { data: extData, isLoading: extLoading, refetch: refetchExt } = useExternalJobs({
     search: search || undefined,
@@ -169,14 +165,8 @@ export default function JobsPage() {
     category: category !== "Tutte" ? category : undefined,
   });
 
-  const baseLocalList = (localJobsRaw && localJobsRaw.length > 0) ? localJobsRaw : INITIAL_REAL_JOBS;
-  const filteredLocalJobs = baseLocalList.filter(j => {
-    if (category && category !== "Tutte" && j.category !== category) return false;
-    if (country && country !== "ALL" && j.country !== country) return false;
-    if (city && !j.city.toLowerCase().includes(city.toLowerCase())) return false;
-    if (search && !j.title.toLowerCase().includes(search.toLowerCase()) && !j.description.toLowerCase().includes(search.toLowerCase())) return false;
-    return true;
-  });
+  const baseLocalList = Array.isArray(localJobsRaw) && localJobsRaw.length > 0 ? localJobsRaw : INITIAL_REAL_JOBS;
+  const filteredLocalJobs = safeFilter(baseLocalList, { category, country, city, search });
 
   const localJobs = [...filteredLocalJobs].sort((a, b) => {
     if (sort === "salary_desc") return (b.salaryMax ?? 0) - (a.salaryMax ?? 0);
