@@ -4,7 +4,8 @@
   "buildCommand": "pnpm --filter @workspace/lavoro8 run build",
   "outputDirectory": "artifacts/lavoro8/dist",
   "installCommand": "pnpm install",
-  "env": {
-    "PORT": "5001"
-  }
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "/api" },
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
 }
