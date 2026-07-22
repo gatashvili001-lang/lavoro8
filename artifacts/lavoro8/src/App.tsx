@@ -8,6 +8,7 @@ import { QueryClient, QueryClientProvider, useQueryClient } from "@tanstack/reac
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/react";
 
 import Home from "@/pages/home";
 import { CookieBanner } from "@/components/cookie-banner";
@@ -265,6 +266,7 @@ function App() {
       <WouterRouter base={basePath}>
         <ClerkProviderWithRoutes />
         <Analytics />
+        <SpeedInsights />
       </WouterRouter>
     </LangProvider>
   );
