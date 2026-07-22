@@ -164,8 +164,8 @@ function buildRoutes(): RouteMeta[] {
   for (const post of BLOG_POSTS) {
     routes.push({
       route: `/blog/${post.slug}`,
-      title: post.title.it,
-      description: post.excerpt.it,
+      title: post.title.it ?? "",
+      description: post.excerpt.it ?? "",
       type: "article",
     });
   }
