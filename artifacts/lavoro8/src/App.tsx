@@ -153,20 +153,23 @@ function OnlinePinger() {
 }
 
 function ClerkQueryClientCacheInvalidator() {
-  const { addListener } = useClerk();
+  const clerk = useClerk();
   const qc = useQueryClient();
   const prevUserIdRef = useRef<string | null | undefined>(undefined);
 
   useEffect(() => {
-    const unsubscribe = addListener(({ user }) => {
-      const userId = user?.id ?? null;
-      if (prevUserIdRef.current !== undefined && prevUserIdRef.current !== userId) {
-        qc.clear();
-      }
-      prevUserIdRef.current = userId;
-    });
-    return unsubscribe;
-  }, [addListener, qc]);
+    if (!clerk || typeof clerk.addListener !== "function") return;
+    try {
+      const unsubscribe = clerk.addListener(({ user }) => {
+        const userId = user?.id ?? null;
+        if (prevUserIdRef.current !== undefined && prevUserIdRef.current !== userId) {
+          qc.clear();
+        }
+        prevUserIdRef.current = userId;
+      });
+      return unsubscribe;
+    } catch (_) {}
+  }, [clerk, qc]);
 
   return null;
 }
@@ -256,11 +259,11 @@ function ClerkProviderWithRoutes() {
   );
 }
 
-class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boolean }> {
-  public state = { hasError: false };
+class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boolean; error: Error | null }> {
+  public state = { hasError: false, error: null as Error | null };
 
-  public static getDerivedStateFromError(): { hasError: boolean } {
-    return { hasError: true };
+  public static getDerivedStateFromError(error: Error) {
+    return { hasError: true, error };
   }
 
   public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
@@ -274,6 +277,11 @@ class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boole
           <div className="max-w-md p-8 border rounded-2xl bg-card shadow-sm space-y-4">
             <h2 className="text-xl font-bold font-display text-foreground">Caricamento in corso...</h2>
             <p className="text-sm text-muted-foreground">Aggiornamento delle offerte di lavoro su Lavoro8.com.</p>
+            {this.state.error && (
+              <div className="p-3 bg-red-50 border border-red-200 text-red-700 text-xs font-mono rounded-lg text-left overflow-auto max-h-32">
+                {this.state.error.toString()}
+              </div>
+            )}
             <button
               onClick={() => window.location.reload()}
               className="px-6 py-2.5 bg-primary text-primary-foreground font-semibold rounded-xl text-sm"
