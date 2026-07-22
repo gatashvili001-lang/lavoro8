@@ -1,6 +1,5 @@
 import { Router } from "express";
-import { db } from "@workspace/db";
-import { jobsTable } from "@workspace/db/schema/jobs";
+import { db, jobsTable } from "@workspace/db";
 import { eq } from "drizzle-orm";
 
 const router = Router();
@@ -119,12 +118,13 @@ export async function publishNextAutoJob() {
     const newJob = await db.insert(jobsTable).values({
       title: jobData.title,
       company: jobData.company,
-      location: jobData.location,
+      city: jobData.location,
       country: jobData.country,
       category: jobData.category,
       contractType: jobData.contractType,
       description: jobData.description,
-      salary: jobData.salary,
+      salaryMin: 1200,
+      salaryMax: 1800,
       email: jobData.email,
       isActive: true,
       createdAt: new Date(),
