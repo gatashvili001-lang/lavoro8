@@ -1,3 +1,4 @@
+import React, { useState } from "react";
 import { Link } from "wouter";
 import { formatJobSalary } from "@/lib/format";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
@@ -57,7 +58,6 @@ function relativeDate(dateStr: string, lang: string): string {
   return date.toLocaleDateString(lang, { day: "numeric", month: "short" });
 }
 
-import React from "react";
 
 export function JobCard({ job }: { job: Job }) {
   const { tr, lang } = useLang();

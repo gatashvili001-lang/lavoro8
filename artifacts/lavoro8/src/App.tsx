@@ -1,4 +1,4 @@
-import { useEffect, useRef, lazy, Suspense } from "react";
+import React, { useEffect, useRef, lazy, Suspense, Component, ErrorInfo, ReactNode } from "react";
 import { LangProvider } from "@/lib/lang-context";
 import { ClerkProvider, SignIn, SignUp, useClerk } from "@clerk/react";
 import { publishableKeyFromHost } from "@clerk/react/internal";
@@ -260,15 +260,49 @@ function ClerkProviderWithRoutes() {
   );
 }
 
+class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boolean }> {
+  public state = { hasError: false };
+
+  public static getDerivedStateFromError(): { hasError: boolean } {
+    return { hasError: true };
+  }
+
+  public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+    console.error("Uncaught error:", error, errorInfo);
+  }
+
+  public render() {
+    if (this.state.hasError) {
+      return (
+        <div className="min-h-screen flex items-center justify-center bg-background p-4 text-center">
+          <div className="max-w-md p-8 border rounded-2xl bg-card shadow-sm space-y-4">
+            <h2 className="text-xl font-bold font-display text-foreground">Caricamento in corso...</h2>
+            <p className="text-sm text-muted-foreground">Aggiornamento delle offerte di lavoro su Lavoro8.com.</p>
+            <button
+              onClick={() => window.location.reload()}
+              className="px-6 py-2.5 bg-primary text-primary-foreground font-semibold rounded-xl text-sm"
+            >
+              Ricarica pagina
+            </button>
+          </div>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
 function App() {
   return (
-    <LangProvider>
-      <WouterRouter base={basePath}>
-        <ClerkProviderWithRoutes />
-        <Analytics />
-        <SpeedInsights />
-      </WouterRouter>
-    </LangProvider>
+    <ErrorBoundary>
+      <LangProvider>
+        <WouterRouter base={basePath}>
+          <ClerkProviderWithRoutes />
+          <Analytics />
+          <SpeedInsights />
+        </WouterRouter>
+      </LangProvider>
+    </ErrorBoundary>
   );
 }
 
