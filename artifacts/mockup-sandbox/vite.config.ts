@@ -4,10 +4,24 @@ import tailwindcss from "@tailwindcss/vite";
 import path from "path";
 import { mockupPreviewPlugin } from "./mockupPreviewPlugin";
 
-const rawPortStr = process.env.PORT;
-const parsedPort = rawPortStr ? Number(rawPortStr) : NaN;
-const port = (!isNaN(parsedPort) && parsedPort > 0) ? parsedPort : 5002;
-const basePath = process.env.BASE_PATH || "/";
+let port = 5002;
+try {
+  if (process.env.PORT && process.env.PORT !== "undefined") {
+    const p = Number(process.env.PORT);
+    if (!isNaN(p) && p > 0) port = p;
+  }
+} catch {
+  port = 5002;
+}
+
+let basePath = "/";
+try {
+  if (process.env.BASE_PATH && process.env.BASE_PATH !== "undefined") {
+    basePath = process.env.BASE_PATH;
+  }
+} catch {
+  basePath = "/";
+}
 
 export default defineConfig({
   base: basePath,

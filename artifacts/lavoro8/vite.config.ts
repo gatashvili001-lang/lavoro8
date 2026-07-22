@@ -5,10 +5,24 @@ import path from "path";
 import { writeSitemapFile } from "./scripts/generate-sitemap";
 import type { Plugin } from "vite";
 
-const rawPortStr = process.env.PORT;
-const parsedPort = rawPortStr ? Number(rawPortStr) : NaN;
-const port = (!isNaN(parsedPort) && parsedPort > 0) ? parsedPort : 5001;
-const basePath = process.env.BASE_PATH || "/";
+let port = 5001;
+try {
+  if (process.env.PORT && process.env.PORT !== "undefined") {
+    const p = Number(process.env.PORT);
+    if (!isNaN(p) && p > 0) port = p;
+  }
+} catch {
+  port = 5001;
+}
+
+let basePath = "/";
+try {
+  if (process.env.BASE_PATH && process.env.BASE_PATH !== "undefined") {
+    basePath = process.env.BASE_PATH;
+  }
+} catch {
+  basePath = "/";
+}
 
 function sitemapPlugin(): Plugin {
   return {
