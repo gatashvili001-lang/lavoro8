@@ -52,10 +52,36 @@ export default function PricingPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ plan }),
       });
-      const data = await resp.json();
-      if (data.url) window.location.href = data.url;
-    } catch (e) {
-      console.error(e);
+      
+      const contentType = resp.headers.get("content-type") ?? "";
+      if (resp.ok && contentType.includes("application/json")) {
+        const data = await resp.json();
+        if (data.url) {
+          window.location.href = data.url;
+          return;
+        }
+        if (data.error) {
+          toast({
+            title: "Errore Stripe",
+            description: data.error,
+            variant: "destructive",
+          });
+          return;
+        }
+      }
+
+      // Fallback notification & mailto checkout request for static hosting
+      toast({
+        title: "Contatta il Supporto Commerciale",
+        description: "Reindirizzamento per l'attivazione immediata del piano aziendale...",
+      });
+      window.location.href = `mailto:supporto@lavoro8.com?subject=Attivazione%20Piano%20Aziendale%20${billing}&body=Vorrei%20attivare%20il%20piano%20${billing}%20su%20lavoro8.com.`;
+    } catch (e: any) {
+      toast({
+        title: "Errore di Connessione Stripe",
+        description: e?.message || "Impossibile avviare il pagamento automatizzato Stripe. Si prega di contattare supporto@lavoro8.com",
+        variant: "destructive",
+      });
     } finally {
       setLoading(false);
     }

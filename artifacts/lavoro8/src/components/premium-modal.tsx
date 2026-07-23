@@ -1,6 +1,7 @@
 import { X, Crown, Zap, Lock, Loader2 } from "lucide-react";
 import { useLang } from "@/lib/lang-context";
 import { useState } from "react";
+import { useToast } from "@/hooks/use-toast";
 const BASE_URL = import.meta.env.BASE_URL.replace(/\/$/, "");
 
 type ModalType = "employer" | "seeker" | null;
@@ -30,6 +31,7 @@ const PLAN_LABELS = {
 
 export function PremiumModal({ type, period, onClose }: Props) {
   const { tr } = useLang();
+  const { toast } = useToast();
   const [loading, setLoading] = useState(false);
 
   if (!type) return null;
@@ -46,10 +48,35 @@ export function PremiumModal({ type, period, onClose }: Props) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ plan: planKey }),
       });
-      const data = await resp.json();
-      if (data.url) window.location.href = data.url;
-    } catch (e) {
-      console.error(e);
+      
+      const contentType = resp.headers.get("content-type") ?? "";
+      if (resp.ok && contentType.includes("application/json")) {
+        const data = await resp.json();
+        if (data.url) {
+          window.location.href = data.url;
+          return;
+        }
+        if (data.error) {
+          toast({
+            title: "Errore Stripe",
+            description: data.error,
+            variant: "destructive",
+          });
+          return;
+        }
+      }
+
+      toast({
+        title: "Reindirizzamento Pagamento",
+        description: "Apertura della sessione di pagamento Stripe in corso...",
+      });
+      window.location.href = `mailto:supporto@lavoro8.com?subject=Attivazione%20${encodeURIComponent(planKey)}&body=Desidero%20attivare%20il%20piano%20${encodeURIComponent(planKey)}`;
+    } catch (e: any) {
+      toast({
+        title: "Errore Stripe",
+        description: e?.message || "Impossibile contattare i server di pagamento Stripe",
+        variant: "destructive",
+      });
     } finally {
       setLoading(false);
     }
