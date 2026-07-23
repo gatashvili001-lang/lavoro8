@@ -11,7 +11,7 @@ import {
   ChevronRight, ExternalLink, ArrowLeft, Star, Camera,
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useLang } from "@/lib/lang-context";
 import { LanguageSwitcher } from "@/components/layout/language-switcher";
 import { CvUpload } from "@/components/cv-upload";
