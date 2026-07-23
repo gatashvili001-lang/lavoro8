@@ -1,5 +1,6 @@
 import { NavBar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
+import { Badge } from "@/components/ui/badge";
 import { useCreateReview, useCreateJobAlert } from "@workspace/api-client-react";
 import { JobCard } from "@/components/job-card";
 import { Input } from "@/components/ui/input";
