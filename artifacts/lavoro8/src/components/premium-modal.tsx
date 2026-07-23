@@ -2,6 +2,7 @@ import { X, Crown, Zap, Lock, Loader2 } from "lucide-react";
 import { useLang } from "@/lib/lang-context";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { getStripeCheckoutUrl } from "@/lib/stripe-config";
 const BASE_URL = import.meta.env.BASE_URL.replace(/\/$/, "");
 
 type ModalType = "employer" | "seeker" | null;
@@ -41,8 +42,15 @@ export function PremiumModal({ type, period, onClose }: Props) {
 
   async function handleCheckout() {
     setLoading(true);
+    const planKey = PLAN_MAP[type!][period];
+    const directStripeUrl = getStripeCheckoutUrl(planKey);
+
+    toast({
+      title: "Stripe Checkout",
+      description: "Reindirizzamento alla cassa sicura Stripe...",
+    });
+
     try {
-      const planKey = PLAN_MAP[type!][period];
       const resp = await fetch(`${BASE_URL}/api/stripe-checkout/session`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -56,27 +64,11 @@ export function PremiumModal({ type, period, onClose }: Props) {
           window.location.href = data.url;
           return;
         }
-        if (data.error) {
-          toast({
-            title: "Errore Stripe",
-            description: data.error,
-            variant: "destructive",
-          });
-          return;
-        }
       }
 
-      toast({
-        title: "Reindirizzamento Pagamento",
-        description: "Apertura della sessione di pagamento Stripe in corso...",
-      });
-      window.location.href = `mailto:supporto@lavoro8.com?subject=Attivazione%20${encodeURIComponent(planKey)}&body=Desidero%20attivare%20il%20piano%20${encodeURIComponent(planKey)}`;
-    } catch (e: any) {
-      toast({
-        title: "Errore Stripe",
-        description: e?.message || "Impossibile contattare i server di pagamento Stripe",
-        variant: "destructive",
-      });
+      window.location.href = directStripeUrl;
+    } catch {
+      window.location.href = directStripeUrl;
     } finally {
       setLoading(false);
     }

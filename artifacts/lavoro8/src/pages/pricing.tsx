@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import { useLang } from "@/lib/lang-context";
 import { useSeo } from "@/lib/use-seo";
 import { useToast } from "@/hooks/use-toast";
+import { getStripeCheckoutUrl } from "@/lib/stripe-config";
 const BASE_URL = import.meta.env.BASE_URL.replace(/\/$/, "");
 
 export default function PricingPage() {
@@ -47,12 +48,19 @@ export default function PricingPage() {
 
   async function handleCheckout() {
     setLoading(true);
+    const planKey = billing === "yearly" ? "employer_yearly" : "employer_monthly";
+    const directStripeUrl = getStripeCheckoutUrl(planKey);
+
+    toast({
+      title: "Stripe Checkout",
+      description: "Reindirizzamento alla cassa sicura Stripe...",
+    });
+
     try {
-      const plan = billing === "yearly" ? "employer_yearly" : "employer_monthly";
       const resp = await fetch(`${BASE_URL}/api/stripe-checkout/session`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ plan }),
+        body: JSON.stringify({ plan: planKey }),
       });
       
       const contentType = resp.headers.get("content-type") ?? "";
@@ -62,28 +70,12 @@ export default function PricingPage() {
           window.location.href = data.url;
           return;
         }
-        if (data.error) {
-          toast({
-            title: "Errore Stripe",
-            description: data.error,
-            variant: "destructive",
-          });
-          return;
-        }
       }
 
-      // Fallback notification & mailto checkout request for static hosting
-      toast({
-        title: "Contatta il Supporto Commerciale",
-        description: "Reindirizzamento per l'attivazione immediata del piano aziendale...",
-      });
-      window.location.href = `mailto:supporto@lavoro8.com?subject=Attivazione%20Piano%20Aziendale%20${billing}&body=Vorrei%20attivare%20il%20piano%20${billing}%20su%20lavoro8.com.`;
-    } catch (e: any) {
-      toast({
-        title: "Errore di Connessione Stripe",
-        description: e?.message || "Impossibile avviare il pagamento automatizzato Stripe. Si prega di contattare supporto@lavoro8.com",
-        variant: "destructive",
-      });
+      // Direct Stripe Payment Link redirection fallback
+      window.location.href = directStripeUrl;
+    } catch {
+      window.location.href = directStripeUrl;
     } finally {
       setLoading(false);
     }
