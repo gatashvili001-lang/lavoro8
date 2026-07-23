@@ -13,6 +13,7 @@ import { SpeedInsights } from "@vercel/speed-insights/react";
 import Home from "@/pages/home";
 import { CookieBanner } from "@/components/cookie-banner";
 import { AppSidebar } from "@/components/layout/app-sidebar";
+import { generateRandomJob, getDynamicJobs, ensureSeededJobs } from "@/lib/dynamic-jobs";
 
 const JobsPage = lazy(() => import("@/pages/jobs"));
 const JobsRouterPage = lazy(() => import("@/pages/jobs-router"));
@@ -136,6 +137,17 @@ function SignUpPage() {
       />
     </div>
   );
+}
+
+function AutoJobIngestion() {
+  useEffect(() => {
+    ensureSeededJobs();
+    const timer = setInterval(() => {
+      generateRandomJob();
+    }, 15000);
+    return () => clearInterval(timer);
+  }, []);
+  return null;
 }
 
 function OnlinePinger() {
@@ -300,6 +312,7 @@ function App() {
   return (
     <ErrorBoundary>
       <LangProvider>
+        <AutoJobIngestion />
         <WouterRouter base={basePath}>
           <ClerkProviderWithRoutes />
           <Analytics />

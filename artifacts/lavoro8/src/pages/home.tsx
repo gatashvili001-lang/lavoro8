@@ -10,7 +10,8 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
 import { Textarea } from "@/components/ui/textarea";
 import { useLang } from "@/lib/lang-context";
-import { INITIAL_REAL_JOBS } from "@/lib/initial-jobs";
+import { useOnlineCount } from "@/lib/online";
+import { useLiveJobs } from "@/lib/dynamic-jobs";
 import { COUNTRY_SLUGS, CATEGORY_SLUGS, MAJOR_COUNTRY_SLUGS, comboSlug, CATEGORY_SLUG_LABEL_KEYS } from "@/lib/seo-slugs";
 import heroBackground from "@/assets/hero-handshake-dark.jpg";
 
@@ -34,13 +35,14 @@ export default function Home() {
   const [city, setCity] = useState("");
   const [, setLocation] = useLocation();
 
-  const jobs = INITIAL_REAL_JOBS;
+  const jobs = useLiveJobs();
+  const onlineCount = useOnlineCount();
   const jobsLoading = false;
   const statsLoading = false;
   const reviews: { id: number; name: string; body: string; rating: number; createdAt: string }[] = [];
   const reviewsLoading = false;
-  const stats = { totalJobs: INITIAL_REAL_JOBS.length, active: INITIAL_REAL_JOBS.length, totalApplications: 3, topCities: [{ city: "Milano" }] };
-  const onlineData = { online: 14 };
+  const stats = { totalJobs: jobs.length, active: jobs.length, totalApplications: 3, topCities: [{ city: "Milano" }] };
+  const onlineData = { online: onlineCount };
 
   const queryClient = useQueryClient();
   const createReview = useCreateReview();
@@ -157,7 +159,7 @@ export default function Home() {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center divide-x divide-border">
               <div className="flex flex-col items-center justify-center">
                 <p className="text-3xl font-bold font-display text-primary tabular-nums">
-                  {statsLoading ? <span className="inline-block w-12 h-8 bg-muted rounded animate-pulse" /> : (stats?.totalJobs || 609)}
+                  {jobs.length}
                 </p>
                 <p className="text-sm font-medium text-muted-foreground mt-1">{tr("activeJobs")}</p>
               </div>
@@ -176,7 +178,7 @@ export default function Home() {
               <div className="flex flex-col items-center justify-center">
                 <p className="text-3xl font-bold font-display text-emerald-600 tabular-nums flex items-center justify-center gap-1.5">
                   <span className="inline-block w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
-                  {onlineData?.online || 14}
+                  {onlineCount}
                 </p>
                 <p className="text-sm font-medium text-muted-foreground mt-1">online ora</p>
               </div>

@@ -22,6 +22,8 @@ import {
   useListContactMessages,
 } from "@workspace/api-client-react";
 import { INITIAL_REAL_JOBS } from "@/lib/initial-jobs";
+import { useOnlineCount } from "@/lib/online";
+import { useLiveJobs } from "@/lib/dynamic-jobs";
 
 export default function AdminPage() {
   const [password, setPassword] = useState("");
@@ -228,15 +230,12 @@ function AdminApplicationCard({ app }: { app: any }) {
 function AdminDashboard() {
   const queryClient = useQueryClient();
   const [searchApps, setSearchApps] = useState("");
-  const { data: onlineData } = useQuery({
-    queryKey: ["online-count"],
-    queryFn: () => customFetch<{ online: number }>("/api/online/count"),
-    refetchInterval: 30000,
-  });
+  const onlineCount = useOnlineCount();
+  const onlineData = { online: onlineCount };
   
   const { data: applications, isLoading: appsLoading } = useListApplications();
   const { data: reviews, isLoading: reviewsLoading } = useAdminListReviews();
-  const jobs = INITIAL_REAL_JOBS;
+  const jobs = useLiveJobs();
   const jobsLoading = false;
   const { data: stats } = useGetJobStats();
   const { data: contactMessages, isLoading: contactLoading } = useListContactMessages();

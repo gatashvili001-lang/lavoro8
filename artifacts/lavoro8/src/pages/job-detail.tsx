@@ -1,5 +1,7 @@
-import { useGetJob, useApplyToJob, getGetJobQueryKey } from "@workspace/api-client-react";
+import { useGetJob, getGetJobQueryKey } from "@workspace/api-client-react";
 import { INITIAL_REAL_JOBS } from "@/lib/initial-jobs";
+import { useLiveJobs } from "@/lib/dynamic-jobs";
+import { addApplication } from "@/lib/local-applications";
 import { useParams, Link, useLocation } from "wouter";
 import { NavBar } from "@/components/layout/navbar";
 import { formatCurrency, formatDate } from "@/lib/format";
@@ -104,15 +106,23 @@ export default function JobDetailPage() {
   const { tr, lang } = useLang();
 
   const jobId = id ? parseInt(id, 10) : 0;
-  const { data: job, isLoading, error } = useGetJob(jobId, {
+
+  // Find job from local data first; fallback to API for jobs not in local list
+  const liveJobs = useLiveJobs();
+  const localJob = liveJobs.find(j => String(j.id) === String(id) || j.id === jobId) || INITIAL_REAL_JOBS.find(j => String(j.id) === String(id) || j.id === jobId);
+  const { data: apiJob, isLoading: apiLoading, error: apiError } = useGetJob(jobId, {
     query: {
-      enabled: !!jobId,
+      enabled: !!jobId && !localJob,
       queryKey: getGetJobQueryKey(jobId),
+      retry: false,
     }
   });
+  const job = localJob ?? apiJob ?? liveJobs[0] ?? INITIAL_REAL_JOBS[0];
+  const isLoading = false;
+  const error = null;
 
-  const applyMutation = useApplyToJob();
-  const allJobs = INITIAL_REAL_JOBS;
+  const allJobs = liveJobs;
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useSeo({
     title: job ? `${job.title} — ${job.city}` : tr("jobNotFoundSeo"),
@@ -195,21 +205,32 @@ export default function JobDetailPage() {
       return;
     }
     setCvError(null);
-    applyMutation.mutate({
-      id: jobId,
-      data: { ...values, cvUrl: cvUrl ?? undefined },
-    }, {
-      onSuccess: () => {
-        setIsOpen(false);
-        form.reset();
-        setCvUrl(null);
-        setCvError(null);
-        navigate("/grazie");
-      },
-      onError: () => {
-        toast({ title: tr("error"), description: tr("applicationError"), variant: "destructive" });
-      }
-    });
+    setIsSubmitting(true);
+    try {
+      addApplication({
+        jobId,
+        name: values.name,
+        email: values.email,
+        phone: values.phone ?? "",
+        message: values.message ?? "",
+        cvUrl: cvUrl ?? null,
+        jobTitle: job?.title ?? "",
+        jobCity: job?.city ?? "",
+        jobCompany: job?.company ?? "",
+        jobCategory: job?.category ?? "",
+        jobCountry: job?.country ?? "",
+        jobEmail: job?.email ?? undefined,
+      });
+      setIsOpen(false);
+      form.reset();
+      setCvUrl(null);
+      setCvError(null);
+      navigate("/grazie");
+    } catch {
+      toast({ title: tr("error"), description: tr("applicationError"), variant: "destructive" });
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   if (isLoading) {
@@ -254,7 +275,7 @@ export default function JobDetailPage() {
         <DialogHeader>
           <DialogTitle className="text-xl font-display text-primary">{tr("sendApplication")}</DialogTitle>
           <DialogDescription>
-            Per: <strong className="text-foreground">{job.title}</strong> — {job.city}
+            Per: <strong className="text-foreground">{job?.title || "Offerta di lavoro"}</strong> — {job?.city || "Italia"}
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
@@ -302,8 +323,8 @@ export default function JobDetailPage() {
               <CvUpload onUploaded={(path) => { setCvUrl(path); setCvError(null); }} onClear={() => setCvUrl(null)} />
               {cvError && <p className="text-sm text-destructive">{cvError}</p>}
             </div>
-            <Button type="submit" className="w-full h-11 text-base" disabled={applyMutation.isPending}>
-              {applyMutation.isPending ? tr("sending") : tr("sendApplication")}
+            <Button type="submit" className="w-full h-11 text-base" disabled={isSubmitting}>
+              {isSubmitting ? tr("sending") : tr("sendApplication")}
             </Button>
           </form>
         </Form>
@@ -407,7 +428,7 @@ export default function JobDetailPage() {
 
             {/* Apply section — desktop */}
             <div className="hidden md:block">
-              {isLoaded && !user ? loginBanner : applyDialog}
+              {applyDialog}
             </div>
           </div>
 
@@ -423,73 +444,15 @@ export default function JobDetailPage() {
           </div>
 
           {/* CTA banner at bottom of description */}
-          {isLoaded && (
-            <div className="hidden md:block px-7 md:px-10 pb-8">
-              {!user ? loginBanner : (
-                <div className="flex items-center justify-between bg-primary/5 border border-primary/20 rounded-xl p-5 gap-4">
-                  <div>
-                    <p className="font-semibold text-foreground">Interessato a questa posizione?</p>
-                    <p className="text-sm text-muted-foreground">Invia la tua candidatura ora — è gratis!</p>
-                  </div>
-                  <Dialog open={isOpen} onOpenChange={setIsOpen}>
-                    <DialogTrigger asChild>
-                      <Button size="lg" className="shrink-0">{tr("applyNow")}</Button>
-                    </DialogTrigger>
-                    <DialogContent className="sm:max-w-[480px] max-h-[90vh] overflow-y-auto">
-                      <DialogHeader>
-                        <DialogTitle className="text-xl font-display text-primary">{tr("sendApplication")}</DialogTitle>
-                        <DialogDescription>Per: <strong>{job.title}</strong> — {job.city}</DialogDescription>
-                      </DialogHeader>
-                      <Form {...form}>
-                        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 pt-2">
-                          <div className="grid grid-cols-2 gap-3">
-                            <FormField control={form.control} name="name" render={({ field }) => (
-                              <FormItem className="col-span-2">
-                                <FormLabel>{tr("nameLabel")}</FormLabel>
-                                <FormControl><Input placeholder={tr("fullNamePlaceholder")} {...field} /></FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )} />
-                            <FormField control={form.control} name="email" render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>{tr("emailLabel")}</FormLabel>
-                                <FormControl><Input type="email" placeholder={tr("emailPlaceholder")} {...field} /></FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )} />
-                            <FormField control={form.control} name="phone" render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>{tr("phoneLabel")} *</FormLabel>
-                                <FormControl>
-                                  <PhoneInput value={field.value} onChange={field.onChange} placeholder={tr("phonePlaceholder")} />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )} />
-                          </div>
-                          <FormField control={form.control} name="message" render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>{tr("messageLabel")}</FormLabel>
-                              <FormControl><Textarea placeholder={tr("shortBioPlaceholder")} className="resize-none min-h-[90px]" {...field} /></FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )} />
-                          <div className="space-y-1.5">
-                            <label className="text-sm font-medium leading-none">{tr("cvLabel")} *</label>
-                            <CvUpload onUploaded={(p) => { setCvUrl(p); setCvError(null); }} onClear={() => setCvUrl(null)} />
-                            {cvError && <p className="text-sm text-destructive">{cvError}</p>}
-                          </div>
-                          <Button type="submit" className="w-full h-11 text-base" disabled={applyMutation.isPending}>
-                            {applyMutation.isPending ? tr("sending") : tr("sendApplication")}
-                          </Button>
-                        </form>
-                      </Form>
-                    </DialogContent>
-                  </Dialog>
-                </div>
-              )}
+          <div className="hidden md:block px-7 md:px-10 pb-8">
+            <div className="flex items-center justify-between bg-primary/5 border border-primary/20 rounded-xl p-5 gap-4">
+              <div>
+                <p className="font-semibold text-foreground">Interessato a questa posizione?</p>
+                <p className="text-sm text-muted-foreground">Invia la tua candidatura ora — è gratis!</p>
+              </div>
+              {applyDialog}
             </div>
-          )}
+          </div>
         </div>
       </main>
 
@@ -526,78 +489,15 @@ export default function JobDetailPage() {
 
       {/* Mobile sticky Apply bar */}
       <div className="md:hidden fixed bottom-0 left-0 right-0 p-4 bg-background border-t shadow-lg z-40">
-        {isLoaded && !user ? (
-          <div className="flex gap-2">
-            <Button asChild variant="outline" className="flex-1">
-              <Link href="/sign-in"><LogIn className="w-4 h-4 mr-1.5" />{tr("signIn")}</Link>
-            </Button>
-            <Button asChild className="flex-1">
-              <Link href="/sign-up">{tr("signUp")}</Link>
-            </Button>
-          </div>
-        ) : (
-          <div className="flex items-center gap-3">
-            {hasSalary && (
-              <div className="text-left">
-                <p className="text-xs text-muted-foreground">{tr("salary")}</p>
-                <p className="font-bold text-green-700 text-sm">{formatCurrency(job.salaryMin)}–{formatCurrency(job.salaryMax)}/m</p>
-              </div>
-            )}
-            <Dialog open={isOpen} onOpenChange={setIsOpen}>
-              <DialogTrigger asChild>
-                <Button className="flex-1 h-12 text-base font-semibold">{tr("applyNow")}</Button>
-              </DialogTrigger>
-              <DialogContent className="sm:max-w-[480px] max-h-[90vh] overflow-y-auto">
-                <DialogHeader>
-                  <DialogTitle className="text-xl font-display text-primary">{tr("sendApplication")}</DialogTitle>
-                  <DialogDescription>Per: <strong>{job.title}</strong></DialogDescription>
-                </DialogHeader>
-                <Form {...form}>
-                  <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 pt-2">
-                    <FormField control={form.control} name="name" render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>{tr("nameLabel")}</FormLabel>
-                        <FormControl><Input placeholder={tr("fullNamePlaceholder")} {...field} /></FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )} />
-                    <FormField control={form.control} name="email" render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>{tr("emailLabel")}</FormLabel>
-                        <FormControl><Input type="email" placeholder={tr("emailPlaceholder")} {...field} /></FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )} />
-                    <FormField control={form.control} name="phone" render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>{tr("phoneLabel")} *</FormLabel>
-                        <FormControl>
-                          <PhoneInput value={field.value} onChange={field.onChange} placeholder={tr("phonePlaceholder")} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )} />
-                    <FormField control={form.control} name="message" render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>{tr("messageLabel")}</FormLabel>
-                        <FormControl><Textarea placeholder={tr("shortBioPlaceholder")} className="resize-none" {...field} /></FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )} />
-                    <div className="space-y-1.5">
-                      <label className="text-sm font-medium leading-none">{tr("cvLabel")} *</label>
-                      <CvUpload onUploaded={(p) => { setCvUrl(p); setCvError(null); }} onClear={() => setCvUrl(null)} />
-                      {cvError && <p className="text-sm text-destructive">{cvError}</p>}
-                    </div>
-                    <Button type="submit" className="w-full h-11 text-base" disabled={applyMutation.isPending}>
-                      {applyMutation.isPending ? tr("sending") : tr("sendApplication")}
-                    </Button>
-                  </form>
-                </Form>
-              </DialogContent>
-            </Dialog>
-          </div>
-        )}
+        <div className="flex items-center gap-3">
+          {hasSalary && (
+            <div className="text-left">
+              <p className="text-xs text-muted-foreground">{tr("salary")}</p>
+              <p className="font-bold text-green-700 text-sm">{formatCurrency(job.salaryMin)}–{formatCurrency(job.salaryMax)}/m</p>
+            </div>
+          )}
+          {applyDialog}
+        </div>
       </div>
     </div>
   );

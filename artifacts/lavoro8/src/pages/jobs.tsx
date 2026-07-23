@@ -12,7 +12,8 @@ import { Link, useSearch } from "wouter";
 import { COUNTRY_SLUGS, CATEGORY_SLUGS, CATEGORY_SLUG_LABEL_KEYS } from "@/lib/seo-slugs";
 import { CITIES_BY_COUNTRY } from "@/lib/cities";
 import { useSeo } from "@/lib/use-seo";
-import { INITIAL_REAL_JOBS, safeFilter } from "@/lib/initial-jobs";
+import { safeFilter } from "@/lib/initial-jobs";
+import { useLiveJobs } from "@/lib/dynamic-jobs";
 
 const BASE_URL = import.meta.env.BASE_URL.replace(/\/$/, "");
 const FLAG_CDN = "https://hatscripts.github.io/circle-flags/flags";
@@ -156,7 +157,7 @@ export default function JobsPage() {
     window.history.replaceState(null, "", `/jobs${params.toString() ? `?${params.toString()}` : ""}`);
   }, [search, city, category, country]);
 
-  const localJobsRaw = INITIAL_REAL_JOBS;
+  const localJobsRaw = useLiveJobs();
   const localLoading = false;
 
   const { data: extData, isLoading: extLoading, refetch: refetchExt } = useExternalJobs({
