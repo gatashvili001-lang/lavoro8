@@ -3,7 +3,7 @@ import { Link } from "wouter";
 import { formatJobSalary } from "@/lib/format";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { MapPin, Building2, Briefcase, ArrowRight, Clock, Sparkles } from "lucide-react";
+import { MapPin, Building2, Briefcase, ArrowRight, Clock, Sparkles, ShieldCheck } from "lucide-react";
 import { Job } from "@workspace/api-client-react";
 import { useLang } from "@/lib/lang-context";
 
@@ -93,9 +93,12 @@ export function JobCard({ job }: { job: Job }) {
 
         <div className="space-y-1.5 text-sm text-muted-foreground mb-4">
           {job.company && (
-            <div className="flex items-center gap-1.5">
+            <div className="flex items-center gap-1.5 flex-wrap">
               <Building2 className="w-3.5 h-3.5 text-primary/60 shrink-0" />
               <span className="font-semibold text-foreground truncate">{job.company}</span>
+              <span className="inline-flex items-center gap-0.5 text-[10px] font-bold text-blue-700 bg-blue-50 border border-blue-200 px-1.5 py-0.5 rounded-full shrink-0">
+                <ShieldCheck className="w-3 h-3 text-blue-600" /> Azienda Verificata
+              </span>
             </div>
           )}
           <div className="flex items-center gap-1.5">

@@ -16,6 +16,7 @@ import { useLang } from "@/lib/lang-context";
 import { LanguageSwitcher } from "@/components/layout/language-switcher";
 import { CvUpload } from "@/components/cv-upload";
 import { useSeo } from "@/lib/use-seo";
+import { loadApplications } from "@/lib/local-applications";
 
 const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
 
@@ -118,16 +119,15 @@ function ApplicationCard({ app }: { app: MyApplication }) {
           <span className={`inline-flex items-center text-xs font-medium px-2.5 py-1 rounded-full border ${statusColor}`}>
             {statusLabel}
           </span>
-          {hasNewMessage && (
-            <span className="inline-flex items-center gap-1 text-xs font-semibold text-purple-700 animate-pulse">
-              💬 Nuovo messaggio — apri per leggere
-            </span>
-          )}
         </div>
-        <span className="text-xs text-muted-foreground flex items-center gap-1">
-          <Calendar className="w-3.5 h-3.5" />
-          {timeAgo(app.createdAt, tr)}
-        </span>
+        <Button
+          size="sm"
+          variant="outline"
+          className="h-8 text-xs gap-1 border-primary/30 hover:bg-primary/5 text-primary font-semibold"
+          onClick={(e) => { e.stopPropagation(); navigate(`/my-applications/${app.id}`); }}
+        >
+          <MessageSquare className="w-3.5 h-3.5" /> Chat con l'Azienda
+        </Button>
       </div>
     </div>
   );
@@ -492,16 +492,13 @@ function ProfileContent() {
 
   useProfileSeo();
 
-  const { data: applications, isLoading } = useQuery<MyApplication[]>({
-    queryKey: ["my-applications"],
-    queryFn: async () => {
-      const res = await fetch(`${basePath}/api/my-applications`, { credentials: "include" });
-      if (!res.ok) throw new Error("Error fetching applications");
-      return res.json();
-    },
-    enabled: !!user,
-    retry: false,
-  });
+  const [applications, setApplications] = useState<MyApplication[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    setApplications(loadApplications() as any[]);
+    setIsLoading(false);
+  }, []);
 
   const displayName = user?.firstName
     ? `${user.firstName}${user.lastName ? " " + user.lastName : ""}`

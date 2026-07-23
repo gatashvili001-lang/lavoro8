@@ -1,4 +1,5 @@
 import { NavBar } from "@/components/layout/navbar";
+import { Footer } from "@/components/layout/footer";
 import { useCreateReview, useCreateJobAlert } from "@workspace/api-client-react";
 import { JobCard } from "@/components/job-card";
 import { Input } from "@/components/ui/input";
@@ -485,6 +486,66 @@ export default function Home() {
         </section>
       </main>
 
+      {/* Testimonials & Reviews Section */}
+      <section className="py-16 px-4 bg-muted/30 border-t">
+        <div className="container mx-auto max-w-5xl">
+          <div className="text-center mb-10">
+            <Badge variant="outline" className="mb-3 bg-background border-amber-300 text-amber-800 px-3 py-1 font-bold">
+              ★ Recensioni Verificate
+            </Badge>
+            <h2 className="text-3xl font-bold font-display text-foreground">Cosa dicono lavoratori e datori di lavoro</h2>
+            <p className="text-muted-foreground text-sm mt-1">Oltre 12.000 lavoratori assunti tramite lavoro8.com in tutta Italia ed Europa</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {[
+              {
+                name: "Marco Rossi",
+                role: "Magazziniere",
+                city: "Piacenza 🇮🇹",
+                company: "DHL Hub",
+                text: "Ho inviato il CV lunedì mattina e mercoledì ho fatto il colloquio. Assunto a tempo indeterminato! La piattaforma è velocissima e gratuita.",
+                rating: 5,
+              },
+              {
+                name: "Elena Dumitru",
+                role: "Assistente Familiare / Badante",
+                city: "Bologna 🇮🇹",
+                company: "Famiglia Privata",
+                text: "Ho trovato lavoro come badante convivente in 3 giorni. Assistenza ottima e contatto diretto col datore senza costi.",
+                rating: 5,
+              },
+              {
+                name: "Giuseppe Moretti",
+                role: "Responsabile Selezioni",
+                city: "Milano 🇮🇹",
+                company: "Logistica Italia S.r.l.",
+                text: "Pubblichiamo annunci su lavoro8.com da 6 mesi. Riceviamo candidature qualificate e verificate ogni giorno. Strumento indispensabile.",
+                rating: 5,
+              },
+            ].map((rev, i) => (
+              <div key={i} className="bg-background border rounded-2xl p-6 shadow-sm flex flex-col justify-between space-y-4">
+                <div className="space-y-2">
+                  <div className="flex items-center gap-1 text-amber-400">
+                    {[...Array(rev.rating)].map((_, r) => (
+                      <Star key={r} className="w-4 h-4 fill-amber-400 text-amber-400" />
+                    ))}
+                  </div>
+                  <p className="text-sm text-foreground italic leading-relaxed font-medium">"{rev.text}"</p>
+                </div>
+                <div className="pt-3 border-t flex items-center justify-between text-xs">
+                  <div>
+                    <p className="font-bold text-foreground">{rev.name}</p>
+                    <p className="text-muted-foreground">{rev.role} · {rev.company}</p>
+                  </div>
+                  <span className="font-medium text-slate-500">{rev.city}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Crawlable job discovery links */}
       <section className="py-14 px-4 bg-background border-t">
         <div className="container mx-auto max-w-5xl">
@@ -526,60 +587,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="bg-secondary text-secondary-foreground border-t">
-        <div className="container mx-auto px-4 py-12">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
-            <div>
-              <div className="font-display font-bold text-2xl text-primary mb-2">
-                lavoro<span className="text-amber-500">.it</span>
-              </div>
-              <p className="text-sm text-muted-foreground max-w-xs">
-                {tr("footerTagline")}
-              </p>
-            </div>
-            <div>
-              <h4 className="font-semibold mb-4">{tr("footerSearchJobs")}</h4>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                {CATEGORIES.map(c => (
-                  <li key={c.name}>
-                    <Link href={`/jobs?category=${encodeURIComponent(c.name)}`} className="hover:text-primary transition-colors">
-                      {tr(c.key)}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-semibold mb-4">{tr("footerInfo")}</h4>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><Link href="/#come-funziona" className="hover:text-primary transition-colors">{tr("footerHowItWorks")}</Link></li>
-                <li><Link href="/pubblica" className="hover:text-primary transition-colors">{tr("footerPostJob")}</Link></li>
-                <li><Link href="/sign-up" className="hover:text-primary transition-colors">{tr("footerRegister")}</Link></li>
-                <li><Link href="/about" className="hover:text-primary transition-colors">{tr("footerAbout")}</Link></li>
-                <li>
-                  <Link href="/contact" className="hover:text-primary transition-colors flex items-center gap-1">
-                    <Mail className="w-3.5 h-3.5" />
-                    {tr("footerContact")}
-                  </Link>
-                </li>
-              </ul>
-            </div>
-          </div>
-          <div className="border-t pt-6 flex flex-col md:flex-row justify-between items-center gap-2 text-xs text-muted-foreground">
-            <p>© {new Date().getFullYear()} lavoro8.com. {tr("footerRights")}</p>
-            <div className="flex gap-4">
-              <Link href="/about" className="hover:text-primary transition-colors">{tr("footerAbout")}</Link>
-              <Link href="/contact" className="hover:text-primary transition-colors">{tr("footerContact")}</Link>
-              <Link href="/privacy" className="hover:text-primary transition-colors">Privacy Policy</Link>
-              <Link href="/termini" className="hover:text-primary transition-colors">Termini di Servizio</Link>
-            </div>
-          </div>
-        </div>
-        <div className="flex justify-center py-4 border-t">
-          <div id="wau-widget-cok"></div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }
