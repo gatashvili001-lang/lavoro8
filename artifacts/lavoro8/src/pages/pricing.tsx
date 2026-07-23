@@ -4,11 +4,13 @@ import { Check, Zap, Building2, Crown, Loader2 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useLang } from "@/lib/lang-context";
 import { useSeo } from "@/lib/use-seo";
+import { useToast } from "@/hooks/use-toast";
 const BASE_URL = import.meta.env.BASE_URL.replace(/\/$/, "");
 
 export default function PricingPage() {
   const { user } = useUser();
   const { tr } = useLang();
+  const { toast } = useToast();
   const [billing, setBilling] = useState<"monthly" | "yearly">("monthly");
   const [loading, setLoading] = useState(false);
 
