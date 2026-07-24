@@ -4,10 +4,11 @@ import { ArrowLeft, Globe2, Users, Briefcase, Shield, CheckCircle, Heart, Search
 import { useGetJobStats } from "@workspace/api-client-react";
 import { useLang } from "@/lib/lang-context";
 import { useSeo } from "@/lib/use-seo";
+import { useLiveJobs } from "@/lib/dynamic-jobs";
 
 export default function AboutPage() {
   const { tr } = useLang();
-  const { data: stats } = useGetJobStats();
+  const jobs = useLiveJobs();
 
   useSeo({
     title: "Chi siamo — lavoro8.com",
@@ -40,7 +41,7 @@ export default function AboutPage() {
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             <div className="bg-blue-50 rounded-xl p-4 text-center">
               <Briefcase className="w-5 h-5 text-blue-600 mx-auto mb-1" />
-              <div className="text-2xl font-bold text-foreground">{stats?.totalJobs ?? "400+"}</div>
+              <div className="text-2xl font-bold text-foreground">{jobs.length}</div>
               <div className="text-xs text-muted-foreground">Offerte attive</div>
             </div>
             <div className="bg-amber-50 rounded-xl p-4 text-center">

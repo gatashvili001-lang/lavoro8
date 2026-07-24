@@ -104,7 +104,7 @@ export default function Home() {
             {/* Pill badge */}
             <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-4 py-1.5 text-sm text-white/90 font-medium mb-6 backdrop-blur-sm">
               <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-              🌍 {statsLoading ? "..." : `${(stats?.totalJobs ?? 0) + 140}+`} {tr("heroJobsLive")}
+              🌍 {jobs.length} {tr("heroJobsLive")}
             </div>
 
             <h1 className="text-4xl md:text-6xl font-bold font-display mb-6 leading-tight text-white">
