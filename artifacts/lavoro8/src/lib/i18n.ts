@@ -5,13 +5,14 @@ export type Lang =
 
 export const LANGUAGES: { code: Lang; label: string; flag: string; flagImg: string; dir?: "rtl" }[] = [
   { code: "it", label: "Italiano",   flag: "🇮🇹", flagImg: "it" },
-  { code: "de", label: "Deutsch",    flag: "🇩🇪", flagImg: "de" },
   { code: "en", label: "English",    flag: "🇬🇧", flagImg: "gb" },
+  { code: "ka", label: "ქართული (GE)", flag: "🇬🇪", flagImg: "ge" },
+  { code: "uk", label: "Українська (UA)", flag: "🇺🇦", flagImg: "ua" },
+  { code: "de", label: "Deutsch",    flag: "🇩🇪", flagImg: "de" },
   { code: "fr", label: "Français",   flag: "🇫🇷", flagImg: "fr" },
   { code: "es", label: "Español",    flag: "🇪🇸", flagImg: "es" },
   { code: "ro", label: "Română",     flag: "🇷🇴", flagImg: "ro" },
   { code: "pl", label: "Polski",     flag: "🇵🇱", flagImg: "pl" },
-  { code: "uk", label: "Українська", flag: "🇺🇦", flagImg: "ua" },
   { code: "ru", label: "Русский",    flag: "🇷🇺", flagImg: "ru" },
   { code: "hr", label: "Hrvatski",   flag: "🇭🇷", flagImg: "hr" },
   { code: "bg", label: "Български",  flag: "🇧🇬", flagImg: "bg" },
@@ -26,7 +27,6 @@ export const LANGUAGES: { code: Lang; label: string; flag: string; flagImg: stri
   { code: "el", label: "Ελληνικά",   flag: "🇬🇷", flagImg: "gr" },
   { code: "ar", label: "العربية",    flag: "🇸🇦", flagImg: "sa", dir: "rtl" },
   { code: "zh", label: "中文",        flag: "🇨🇳", flagImg: "cn" },
-  { code: "ka", label: "ქართული",    flag: "🇬🇪", flagImg: "ge" },
 ];
 
 export const COUNTRY_LANG: Record<string, Lang> = {

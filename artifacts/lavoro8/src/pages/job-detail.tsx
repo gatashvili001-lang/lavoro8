@@ -6,7 +6,7 @@ import { NavBar } from "@/components/layout/navbar";
 import { formatCurrency, formatDate } from "@/lib/format";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { MapPin, Building2, Briefcase, Euro, LogIn, ArrowLeft, Share2, CheckCircle2, Clock, Wifi, ArrowRight } from "lucide-react";
+import { MapPin, Building2, Briefcase, Euro, LogIn, ArrowLeft, Share2, CheckCircle2, Clock, Wifi, ArrowRight, MessageCircle, Send } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -91,6 +91,48 @@ function ShareButton({ title, city }: { title: string; city: string }) {
       <Share2 className="w-4 h-4" />
       <span className="hidden sm:inline">{tr("shareLabel")}</span>
     </button>
+  );
+}
+
+function SocialShareWidget({ title, city }: { title: string; city: string }) {
+  const currentUrl = typeof window !== "undefined" ? encodeURIComponent(window.location.href) : "";
+  const shareText = encodeURIComponent(`Offerta di lavoro: ${title} a ${city}. Candidati subito su lavoro8.com!`);
+
+  const whatsappUrl = `https://api.whatsapp.com/send?text=${shareText}%20${currentUrl}`;
+  const telegramUrl = `https://t.me/share/url?url=${currentUrl}&text=${shareText}`;
+  const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${currentUrl}`;
+
+  return (
+    <div className="flex flex-wrap items-center gap-2 mt-5 pt-4 border-t">
+      <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mr-1">Condividi:</span>
+      <a
+        href={whatsappUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="inline-flex items-center gap-2 bg-[#25D366] hover:bg-[#20bd5a] text-white font-semibold text-xs px-3.5 py-2 rounded-xl shadow-sm transition-all"
+      >
+        <MessageCircle className="w-4 h-4 fill-current" />
+        Condividi su WhatsApp
+      </a>
+      <a
+        href={telegramUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="inline-flex items-center gap-2 bg-[#229ED9] hover:bg-[#1f8ebd] text-white font-semibold text-xs px-3.5 py-2 rounded-xl shadow-sm transition-all"
+      >
+        <Send className="w-4 h-4" />
+        Telegram
+      </a>
+      <a
+        href={facebookUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="inline-flex items-center gap-2 bg-[#1877F2] hover:bg-[#166fe5] text-white font-semibold text-xs px-3.5 py-2 rounded-xl shadow-sm transition-all"
+      >
+        <Share2 className="w-4 h-4" />
+        Facebook
+      </a>
+    </div>
   );
 }
 
@@ -429,6 +471,9 @@ export default function JobDetailPage() {
             <div className="hidden md:block">
               {applyDialog}
             </div>
+
+            {/* Social Share Widget */}
+            <SocialShareWidget title={job.title} city={job.city} />
           </div>
 
           {/* Description */}
