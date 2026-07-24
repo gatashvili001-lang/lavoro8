@@ -37,6 +37,7 @@ const BlogPage = lazy(() => import("@/pages/blog"));
 const BlogPostPage = lazy(() => import("@/pages/blog-post"));
 const FaqPage = lazy(() => import("@/pages/faq"));
 const TrustSafetyPage = lazy(() => import("@/pages/trust-safety"));
+const CvBuilderPage = lazy(() => import("@/pages/cv-builder"));
 const NotFound = lazy(() => import("@/pages/not-found"));
 
 const queryClient = new QueryClient({
@@ -208,6 +209,8 @@ function Router() {
         <Route path="/refunds" component={RefundsPage} />
         <Route path="/about" component={AboutPage} />
         <Route path="/trust-safety" component={TrustSafetyPage} />
+        <Route path="/crea-cv" component={CvBuilderPage} />
+        <Route path="/cv-builder" component={CvBuilderPage} />
         <Route path="/contact" component={ContactPage} />
         <Route path="/grazie" component={ThankYouPage} />
         <Route path="/blog/:slug" component={BlogPostPage} />

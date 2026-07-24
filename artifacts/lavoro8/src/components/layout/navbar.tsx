@@ -1,7 +1,7 @@
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { useClerk, useUser } from "@clerk/react";
-import { LogOut, Menu, X, Crown } from "lucide-react";
+import { LogOut, Menu, X, Crown, FileText } from "lucide-react";
 import { useState } from "react";
 import { LanguageSwitcher } from "./language-switcher";
 import { useLang } from "@/lib/lang-context";
@@ -41,6 +41,9 @@ export function NavBar() {
         <nav className="hidden md:flex items-center gap-5">
           <Link href="/jobs" className={linkCls("/jobs")}>
             {tr("allJobs")}
+          </Link>
+          <Link href="/crea-cv" className={`text-sm font-semibold flex items-center gap-1 transition-colors ${isActive("/crea-cv") ? "text-emerald-700 font-bold" : "text-emerald-600 hover:text-emerald-800"}`}>
+            <FileText className="w-3.5 h-3.5" /> Crea CV
           </Link>
           <Link href="/blog" className={linkCls("/blog")}>
             Blog
