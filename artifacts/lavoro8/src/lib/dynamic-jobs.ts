@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { INITIAL_REAL_JOBS, Job } from "./initial-jobs";
 
+const BASE_URL = import.meta.env.BASE_URL.replace(/\/$/, "");
 const STORAGE_KEY = "lavoro8_dynamic_jobs";
 
 const CATEGORIES = [
@@ -202,12 +203,43 @@ export function useLiveJobs(): Job[] {
   const [jobs, setJobs] = useState<Job[]>(() => getAllJobs());
 
   useEffect(() => {
+    let isMounted = true;
+
+    async function syncDatabaseJobs() {
+      try {
+        const res = await fetch(`${BASE_URL}/api/jobs`);
+        const contentType = res.headers.get("content-type") ?? "";
+        if (res.ok && contentType.includes("application/json")) {
+          const dbJobs = await res.json();
+          if (isMounted && Array.isArray(dbJobs)) {
+            const dynamic = getDynamicJobs();
+            const combined = [...dynamic, ...dbJobs];
+            // Deduplicate by ID
+            const uniqueMap = new Map<number, Job>();
+            combined.forEach(j => uniqueMap.set(j.id, j));
+            const uniqueJobs = Array.from(uniqueMap.values());
+            setJobs(uniqueJobs);
+            return;
+          }
+        }
+      } catch {
+        // network fallback
+      }
+
+      if (isMounted) {
+        setJobs(getAllJobs());
+      }
+    }
+
+    syncDatabaseJobs();
+
     const handleUpdate = () => {
-      setJobs(getAllJobs());
+      syncDatabaseJobs();
     };
     window.addEventListener("lavoro8_jobs_updated", handleUpdate);
     window.addEventListener("storage", handleUpdate);
     return () => {
+      isMounted = false;
       window.removeEventListener("lavoro8_jobs_updated", handleUpdate);
       window.removeEventListener("storage", handleUpdate);
     };
