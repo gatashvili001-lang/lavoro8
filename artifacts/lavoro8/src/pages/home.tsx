@@ -267,7 +267,7 @@ export default function Home() {
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-                {(jobs && jobs.length > 0 ? jobs : INITIAL_REAL_JOBS).slice(0, 6).map(job => <JobCard key={job.id} job={job} />)}
+                {(jobs || []).slice(0, 6).map(job => <JobCard key={job.id} job={job} />)}
               </div>
             )}
 

@@ -1,5 +1,4 @@
 import { useGetJob, getGetJobQueryKey } from "@workspace/api-client-react";
-import { INITIAL_REAL_JOBS } from "@/lib/initial-jobs";
 import { useLiveJobs } from "@/lib/dynamic-jobs";
 import { addApplication } from "@/lib/local-applications";
 import { useParams, Link, useLocation } from "wouter";
@@ -109,7 +108,7 @@ export default function JobDetailPage() {
 
   // Find job from local data first; fallback to API for jobs not in local list
   const liveJobs = useLiveJobs();
-  const localJob = liveJobs.find(j => String(j.id) === String(id) || j.id === jobId) || INITIAL_REAL_JOBS.find(j => String(j.id) === String(id) || j.id === jobId);
+  const localJob = liveJobs.find(j => String(j.id) === String(id) || j.id === jobId);
   const { data: apiJob, isLoading: apiLoading, error: apiError } = useGetJob(jobId, {
     query: {
       enabled: !!jobId && !localJob,
@@ -117,7 +116,7 @@ export default function JobDetailPage() {
       retry: false,
     }
   });
-  const job = localJob ?? apiJob ?? liveJobs[0] ?? INITIAL_REAL_JOBS[0];
+  const job = localJob ?? apiJob ?? liveJobs[0];
   const isLoading = false;
   const error = null;
 

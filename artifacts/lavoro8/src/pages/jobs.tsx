@@ -166,7 +166,7 @@ export default function JobsPage() {
     category: category !== "Tutte" ? category : undefined,
   });
 
-  const baseLocalList = Array.isArray(localJobsRaw) && localJobsRaw.length > 0 ? localJobsRaw : INITIAL_REAL_JOBS;
+  const baseLocalList = Array.isArray(localJobsRaw) ? localJobsRaw : [];
   const filteredLocalJobs = safeFilter(baseLocalList, { category, country, city, search });
 
   const localJobs = [...filteredLocalJobs].sort((a, b) => {

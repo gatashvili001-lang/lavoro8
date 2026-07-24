@@ -21,7 +21,6 @@ import {
   useGetJobStats,
   useListContactMessages,
 } from "@workspace/api-client-react";
-import { INITIAL_REAL_JOBS } from "@/lib/initial-jobs";
 import { useOnlineCount } from "@/lib/online";
 import { useLiveJobs } from "@/lib/dynamic-jobs";
 
