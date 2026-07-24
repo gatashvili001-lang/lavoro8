@@ -167,9 +167,9 @@ export default function Home() {
               </div>
               <div className="flex flex-col items-center justify-center">
                 <p className="text-3xl font-bold font-display text-primary tabular-nums">
-                  {statsLoading ? <span className="inline-block w-12 h-8 bg-muted rounded animate-pulse" /> : (stats?.totalApplications || 3)}
+                  50+
                 </p>
-                <p className="text-sm font-medium text-muted-foreground mt-1">{tr("applicationsSent")}</p>
+                <p className="text-sm font-medium text-muted-foreground mt-1">Aziende Partner</p>
               </div>
               <div className="flex flex-col items-center justify-center">
                 <p className="text-3xl font-bold font-display text-primary">
