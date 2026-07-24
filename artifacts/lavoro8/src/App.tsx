@@ -139,16 +139,7 @@ function SignUpPage() {
   );
 }
 
-function AutoJobIngestion() {
-  useEffect(() => {
-    ensureSeededJobs();
-    const timer = setInterval(() => {
-      generateRandomJob();
-    }, 15000);
-    return () => clearInterval(timer);
-  }, []);
-  return null;
-}
+
 
 function OnlinePinger() {
   useEffect(() => {
@@ -312,7 +303,6 @@ function App() {
   return (
     <ErrorBoundary>
       <LangProvider>
-        <AutoJobIngestion />
         <WouterRouter base={basePath}>
           <ClerkProviderWithRoutes />
           <Analytics />

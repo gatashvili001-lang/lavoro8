@@ -115,13 +115,7 @@ export function getAllJobs(): Job[] {
 }
 
 export function ensureSeededJobs() {
-  const current = getDynamicJobs();
-  if (current.length < 15) {
-    const count = 15 - current.length;
-    for (let i = 0; i < count; i++) {
-      generateRandomJob();
-    }
-  }
+  // No-op: Only real job listings from database / local storage are displayed.
 }
 
 export function getJobById(id: number): Job | undefined {
