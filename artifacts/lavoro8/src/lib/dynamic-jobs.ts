@@ -28,7 +28,7 @@ export function getJobById(id: number): Job | undefined {
 }
 
 export function useLiveJobs(): Job[] {
-  const [jobs, setJobs] = useState<Job[]>(() => getDynamicJobs());
+  const [jobs, setJobs] = useState<Job[]>(() => getAllJobs());
 
   useEffect(() => {
     let isMounted = true;
@@ -41,7 +41,7 @@ export function useLiveJobs(): Job[] {
         const contentType = res.headers.get("content-type") ?? "";
         if (res.ok && contentType.includes("application/json")) {
           const dbJobs = await res.json();
-          if (Array.isArray(dbJobs)) {
+          if (Array.isArray(dbJobs) && dbJobs.length > 0) {
             allFetched.push(...dbJobs);
           }
         }
@@ -55,7 +55,7 @@ export function useLiveJobs(): Job[] {
         if (extRes.ok && extContentType.includes("application/json")) {
           const extData = await extRes.json();
           const extJobsList = extData.data || extData;
-          if (Array.isArray(extJobsList)) {
+          if (Array.isArray(extJobsList) && extJobsList.length > 0) {
             const mappedExt: Job[] = extJobsList.map((e: any, idx: number) => ({
               id: 90000 + idx,
               title: e.title,
@@ -75,7 +75,9 @@ export function useLiveJobs(): Job[] {
 
       if (isMounted) {
         const localDynamic = getDynamicJobs();
-        const combined = [...localDynamic, ...allFetched];
+        // Failsafe safety net: if API queries return 0 jobs, use seeded 105+ real jobs array so the site NEVER shows 0 jobs
+        const baseJobs = allFetched.length > 0 ? allFetched : INITIAL_REAL_JOBS;
+        const combined = [...localDynamic, ...baseJobs];
         const uniqueMap = new Map<number | string, Job>();
         combined.forEach(j => uniqueMap.set(j.id, j));
         const finalJobs = Array.from(uniqueMap.values());
