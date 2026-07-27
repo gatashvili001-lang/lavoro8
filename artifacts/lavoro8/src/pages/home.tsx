@@ -105,22 +105,30 @@ export default function Home() {
           }}
         >
 
+          {/* Ambient Glow Gradient */}
+          <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-gradient-to-r from-blue-600/30 via-amber-500/20 to-emerald-500/30 blur-[120px] rounded-full pointer-events-none z-0" />
+
           <div className="container mx-auto max-w-4xl text-center relative z-10">
-            {/* Pill badge */}
-            <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-4 py-1.5 text-sm text-white/90 font-medium mb-6 backdrop-blur-sm">
-              <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-              🌍 {jobs.length} {tr("heroJobsLive")}
+            {/* Live strict presence badge */}
+            <div className="inline-flex items-center gap-2.5 bg-slate-950/60 border border-white/20 rounded-full px-4 py-1.5 text-xs font-semibold text-white/90 mb-6 shadow-xl backdrop-blur-md">
+              <span className="relative flex h-2.5 w-2.5">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+              </span>
+              <span>{onlineCount} {tr("onlineNow")}</span>
+              <span className="text-white/30">•</span>
+              <span>🌍 {jobs.length} {tr("heroJobsLive")}</span>
             </div>
 
-            <h1 className="text-4xl md:text-6xl font-bold font-display mb-6 leading-tight text-white">
+            <h1 className="text-4xl md:text-6xl font-bold font-display mb-6 leading-tight text-white drop-shadow-sm">
               {tr("heroTitle")}{" "}
-              <span className="text-amber-400">{tr("heroHighlight")}</span>
+              <span className="text-amber-400 underline decoration-amber-400/30 underline-offset-8">{tr("heroHighlight")}</span>
             </h1>
-            <p className="text-lg md:text-xl mb-10 text-white/75 max-w-2xl mx-auto">
+            <p className="text-lg md:text-xl mb-10 text-white/80 max-w-2xl mx-auto leading-relaxed">
               {tr("heroSubtitle")}
             </p>
 
-            <form onSubmit={handleSearch} className="bg-white p-3 rounded-2xl flex flex-col gap-2 shadow-2xl border border-white/20">
+            <form onSubmit={handleSearch} className="bg-white/95 backdrop-blur-xl p-3.5 rounded-3xl flex flex-col gap-2.5 shadow-2xl border border-white/40 ring-1 ring-black/5">
               <div className="flex flex-col md:flex-row gap-2">
                 <div className="flex-1 relative">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground w-5 h-5" />

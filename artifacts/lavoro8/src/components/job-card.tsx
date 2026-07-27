@@ -73,7 +73,7 @@ export function JobCard({ job }: { job: Job }) {
   const isNew = daysOld <= 2;
 
   return (
-    <Card className="hover:shadow-lg transition-all duration-200 group flex flex-col h-full border-border hover:border-primary/30 bg-background relative">
+    <Card className="hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group flex flex-col h-full border-border hover:border-primary/40 bg-background relative rounded-2xl">
       {isNew && (
         <div className="absolute -top-2 -right-2 z-10">
           <span className="bg-green-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-0.5 shadow-sm">

@@ -66,7 +66,7 @@ export function ExternalJobCard({ job }: { job: ExternalJob }) {
     : null;
 
   return (
-    <Card className="hover:shadow-md transition-all group flex flex-col h-full border-border hover:border-blue-300 relative overflow-hidden">
+    <Card className="hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group flex flex-col h-full border-border hover:border-blue-400 bg-background relative overflow-hidden rounded-2xl">
       <div className="absolute top-0 right-0 flex items-center gap-1.5 z-10 p-2">
         <BookmarkButton job={job} />
         <span className="bg-blue-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-lg shadow-sm">
