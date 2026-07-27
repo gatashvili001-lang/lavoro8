@@ -205,7 +205,10 @@ function Router() {
         <Route path="/profilo" component={ProfilePage} />
         <Route path="/profile" component={ProfilePage} />
         <Route path="/privacy" component={PrivacyPage} />
+        <Route path="/privacy-policy" component={PrivacyPage} />
         <Route path="/termini" component={TerminiPage} />
+        <Route path="/terms" component={TerminiPage} />
+        <Route path="/cookie-policy" component={PrivacyPage} />
         <Route path="/refunds" component={RefundsPage} />
         <Route path="/about" component={AboutPage} />
         <Route path="/trust-safety" component={TrustSafetyPage} />

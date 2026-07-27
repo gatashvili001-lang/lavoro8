@@ -70,8 +70,9 @@ export function Footer() {
                   <ShieldCheck className="w-3.5 h-3.5 text-amber-400" /> Sicurezza e Trasparenza
                 </Link>
               </li>
-              <li><Link href="/privacy" className="hover:text-amber-400 transition-colors">Informativa Privacy (GDPR)</Link></li>
-              <li><Link href="/termini" className="hover:text-amber-400 transition-colors">Termini e Condizioni di Servizio</Link></li>
+              <li><Link href="/privacy-policy" className="hover:text-amber-400 transition-colors">Informativa Privacy (GDPR)</Link></li>
+              <li><Link href="/terms" className="hover:text-amber-400 transition-colors">Termini e Condizioni di Servizio</Link></li>
+              <li><Link href="/cookie-policy" className="hover:text-amber-400 transition-colors">Politica sui Cookie</Link></li>
               <li><Link href="/refunds" className="hover:text-amber-400 transition-colors">Politica di Rimborso</Link></li>
               <li><Link href="/about" className="hover:text-amber-400 transition-colors">Chi Siamo</Link></li>
               <li><Link href="/contact" className="hover:text-amber-400 transition-colors">Contatti e Supporto</Link></li>

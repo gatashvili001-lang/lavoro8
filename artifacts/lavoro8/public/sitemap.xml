@@ -8,8 +8,13 @@
   <url><loc>https://lavoro8.com/pricing</loc><priority>0.5</priority></url>
   <url><loc>https://lavoro8.com/pubblica</loc><priority>0.6</priority></url>
   <url><loc>https://lavoro8.com/aziende</loc><priority>0.7</priority></url>
+  <url><loc>https://lavoro8.com/crea-cv</loc><priority>0.8</priority></url>
   <url><loc>https://lavoro8.com/privacy</loc><priority>0.3</priority></url>
+  <url><loc>https://lavoro8.com/privacy-policy</loc><priority>0.3</priority></url>
   <url><loc>https://lavoro8.com/termini</loc><priority>0.3</priority></url>
+  <url><loc>https://lavoro8.com/terms</loc><priority>0.3</priority></url>
+  <url><loc>https://lavoro8.com/cookie-policy</loc><priority>0.3</priority></url>
+  <url><loc>https://lavoro8.com/faq</loc><priority>0.6</priority></url>
   <url><loc>https://lavoro8.com/jobs/italy</loc><priority>0.8</priority></url>
   <url><loc>https://lavoro8.com/jobs/germany</loc><priority>0.8</priority></url>
   <url><loc>https://lavoro8.com/jobs/france</loc><priority>0.8</priority></url>

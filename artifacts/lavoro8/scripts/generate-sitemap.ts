@@ -17,8 +17,13 @@ export function buildSitemapXml(): string {
     { loc: "/pricing", priority: "0.5" },
     { loc: "/pubblica", priority: "0.6" },
     { loc: "/aziende", priority: "0.7" },
+    { loc: "/crea-cv", priority: "0.8" },
     { loc: "/privacy", priority: "0.3" },
+    { loc: "/privacy-policy", priority: "0.3" },
     { loc: "/termini", priority: "0.3" },
+    { loc: "/terms", priority: "0.3" },
+    { loc: "/cookie-policy", priority: "0.3" },
+    { loc: "/faq", priority: "0.6" },
   ];
 
   for (const countrySlug of Object.keys(COUNTRY_SLUGS)) {
