@@ -184,46 +184,6 @@ export default function Home() {
                 </div>
               </div>
             </form>
-
-            <div className="flex flex-wrap justify-center gap-2 mt-6 text-sm text-white/70">
-              <span>{tr("searchByCategory")}</span>
-              {CATEGORIES.map(c => (
-                <Link
-                  key={c.name}
-                  href={`/jobs?category=${encodeURIComponent(c.name)}`}
-                  className="text-white font-semibold hover:text-amber-300 transition-colors flex items-center gap-1"
-                >
-                  {c.icon} {tr(c.key)}
-                </Link>
-              ))}
-            </div>
-
-            {/* Minimalist Visual Country Chips */}
-            <div className="mt-8 max-w-3xl mx-auto">
-              <div className="flex items-center justify-center gap-2 overflow-x-auto pb-2 scrollbar-none">
-                {[
-                  { code: "ALL", flag: "🌍", label: "Tutti" },
-                  { code: "IT", flag: "🇮🇹", label: "Italia" },
-                  { code: "DE", flag: "🇩🇪", label: "Germania" },
-                  { code: "FR", flag: "🇫🇷", label: "Francia" },
-                  { code: "ES", flag: "🇪🇸", label: "Spagna" },
-                  { code: "CH", flag: "🇨🇭", label: "Svizzera" },
-                  { code: "US", flag: "🇺🇸", label: "USA" },
-                  { code: "NL", flag: "🇳🇱", label: "Paesi Bassi" },
-                  { code: "PL", flag: "🇵🇱", label: "Polonia" },
-                  { code: "EU", flag: "🇪🇺", label: "Europa" },
-                ].map((c) => (
-                  <Link
-                    key={c.code}
-                    href={c.code === "ALL" ? "/jobs" : `/jobs?country=${c.code}`}
-                    className="group relative flex items-center gap-2 bg-white/10 hover:bg-white/20 active:scale-95 text-white text-xs font-semibold px-3.5 py-2 rounded-2xl border border-white/20 backdrop-blur-md transition-all shadow-sm shrink-0"
-                  >
-                    <span className="text-base leading-none">{c.flag}</span>
-                    <span>{c.label}</span>
-                  </Link>
-                ))}
-              </div>
-            </div>
           </div>
         </section>
 
