@@ -439,9 +439,22 @@ export default function JobDetailPage() {
     </div>
   );
 
+  if (!job) {
+    return (
+      <div className="min-h-[100dvh] flex flex-col bg-background">
+        <NavBar />
+        <main className="flex-1 container mx-auto px-4 py-16 text-center">
+          <h2 className="text-2xl font-bold mb-4">{tr("jobNotFoundSeo")}</h2>
+          <Button asChild><Link href="/jobs">{tr("viewAllJobs")}</Link></Button>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
   const hasSalary = job.salaryMin && job.salaryMin > 0;
   const similarJobs = Array.isArray(allJobs)
-    ? allJobs.filter(j => j.id !== job.id && j.category === job.category).slice(0, 3)
+    ? allJobs.filter(j => j && j.id !== job.id && j.category === job.category).slice(0, 3)
     : [];
   const jobIsNew = isNew(job.createdAt);
   const dateLabel = relativeDate(job.createdAt, lang);

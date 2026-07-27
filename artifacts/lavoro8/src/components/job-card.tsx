@@ -67,6 +67,7 @@ function relativeDate(dateStr?: string | null, lang: string = "it"): string {
 
 export function JobCard({ job }: { job: Job }) {
   const { tr, lang } = useLang();
+  if (!job) return null;
   const catColor = CATEGORY_COLORS[job.category ?? "Altro"] ?? CATEGORY_COLORS.Altro;
   const hasSalary = Boolean(job.salaryMin && job.salaryMin > 0);
   const daysOld = job.createdAt ? Math.floor((Date.now() - new Date(job.createdAt).getTime()) / 86400000) : 999;

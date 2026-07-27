@@ -31,8 +31,10 @@ export function getEnrichedDescription(
   }
 
   // Extract key technical terms for tailored requirements
-  const isMagazzino = title.toLowerCase().includes("magazzin") || jobCat === "Magazzino";
-  const isDriver = title.toLowerCase().includes("driver") || title.toLowerCase().includes("autist") || title.toLowerCase().includes("rider") || jobCat === "Logistica";
+  const jobTitle = (title || "Offerta di Lavoro").trim();
+  const safeTitle = jobTitle.toLowerCase();
+  const isMagazzino = safeTitle.includes("magazzin") || jobCat === "Magazzino";
+  const isDriver = safeTitle.includes("driver") || safeTitle.includes("autist") || safeTitle.includes("rider") || jobCat === "Logistica";
   const isRistorazione = jobCat === "Ristorante" || jobCat === "Hotel";
   const isBadante = jobCat === "Badante" || jobCat === "Colf";
 

@@ -28,6 +28,8 @@ export function BookmarkButton({ job, variant = "icon", className = "" }: Bookma
   const { toast } = useToast();
   const { lang } = useLang();
 
+  if (!job || !job.id) return null;
+
   useEffect(() => {
     setSaved(isJobSaved(job.id));
 

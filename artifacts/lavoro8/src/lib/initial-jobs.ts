@@ -67,7 +67,7 @@ const RAW_INITIAL_REAL_JOBS: Job[] = [
       salaryMax,
       contractType: i % 2 === 0 ? "Tempo indeterminato" : "Tempo determinato",
       description: `Offerta di lavoro verificata pubblicata su Lavoro8.com per la sede di ${city}. Si richiede serietà, puntualità e disponibilità immediata ad iniziare la prestazione lavorativa.`,
-      email: `selezione.${city.toLowerCase()}@${company.toLowerCase().replace(/[^a-z0-9]/g, "")}.it`,
+      email: `selezione.${(city || "italia").toLowerCase()}@${(company || "azienda").toLowerCase().replace(/[^a-z0-9]/g, "")}.it`,
       createdAt: daysAgo(i % 5),
     };
   }),

@@ -60,6 +60,7 @@ function relativeDate(dateStr: string, lang: string): string {
 
 export function ExternalJobCard({ job }: { job: ExternalJob }) {
   const { lang, tr } = useLang();
+  if (!job) return null;
   const detailPath = `/jobs/ext/${encodeURIComponent(job.id)}`;
   const snippet = job.description
     ? job.description.replace(/<[^>]+>/g, "").slice(0, 120).trim() + "…"
