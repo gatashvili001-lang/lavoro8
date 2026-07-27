@@ -28,19 +28,22 @@ export function BookmarkButton({ job, variant = "icon", className = "" }: Bookma
   const { toast } = useToast();
   const { lang } = useLang();
 
-  if (!job || !job.id) return null;
+  const jobId = job?.id;
 
   useEffect(() => {
-    setSaved(isJobSaved(job.id));
+    if (!jobId) return;
+    setSaved(isJobSaved(jobId));
 
     function handleChange() {
-      setSaved(isJobSaved(job.id));
+      if (jobId) setSaved(isJobSaved(jobId));
     }
     window.addEventListener("lavoro8_saved_jobs_changed", handleChange);
     return () => {
       window.removeEventListener("lavoro8_saved_jobs_changed", handleChange);
     };
-  }, [job.id]);
+  }, [jobId]);
+
+  if (!job || !job.id) return null;
 
   function handleToggle(e: React.MouseEvent) {
     e.preventDefault();
@@ -67,19 +70,23 @@ export function BookmarkButton({ job, variant = "icon", className = "" }: Bookma
       <button
         type="button"
         onClick={handleToggle}
-        className={`inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl font-semibold text-sm transition-all border shadow-sm ${
+        className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold border transition-all ${
           saved
-            ? "bg-amber-500/10 text-amber-700 border-amber-300 hover:bg-amber-500/20"
-            : "bg-background text-foreground/80 border-border hover:bg-muted hover:text-foreground"
+            ? "bg-amber-50 border-amber-300 text-amber-900 shadow-sm"
+            : "bg-background border-border text-foreground hover:bg-muted/40"
         } ${className}`}
-        title={saved ? "Rimuovi dai salvati" : "Salva offerta"}
       >
         {saved ? (
-          <BookmarkCheck className="w-4 h-4 text-amber-600 fill-amber-500/20" />
+          <>
+            <BookmarkCheck className="w-4 h-4 text-amber-500 fill-amber-500" />
+            <span>Salvata</span>
+          </>
         ) : (
-          <Bookmark className="w-4 h-4 text-muted-foreground" />
+          <>
+            <Bookmark className="w-4 h-4 text-muted-foreground" />
+            <span>Salva nei Preferiti</span>
+          </>
         )}
-        <span>{saved ? "Offerta Salvata" : "Salva Offerta"}</span>
       </button>
     );
   }
@@ -88,17 +95,17 @@ export function BookmarkButton({ job, variant = "icon", className = "" }: Bookma
     <button
       type="button"
       onClick={handleToggle}
-      className={`p-2 rounded-full transition-all border shadow-sm flex items-center justify-center ${
+      aria-label="Bookmark job"
+      className={`p-2 rounded-xl border transition-all ${
         saved
-          ? "bg-amber-50 text-amber-600 border-amber-200 hover:bg-amber-100 ring-2 ring-amber-400/20"
-          : "bg-white/80 hover:bg-white text-muted-foreground hover:text-foreground border-slate-200"
+          ? "bg-amber-50 border-amber-300 text-amber-600 shadow-sm"
+          : "bg-background/80 border-border/60 text-muted-foreground hover:text-foreground hover:bg-background"
       } ${className}`}
-      title={saved ? "Rimuovi dai salvati" : "Salva offerta"}
     >
       {saved ? (
-        <BookmarkCheck className="w-4.5 h-4.5 text-amber-600 fill-amber-500" />
+        <BookmarkCheck className="w-4 h-4 text-amber-500 fill-amber-500" />
       ) : (
-        <Bookmark className="w-4.5 h-4.5 text-slate-500 hover:text-slate-800" />
+        <Bookmark className="w-4 h-4" />
       )}
     </button>
   );

@@ -3,6 +3,8 @@ import { Footer } from "@/components/layout/footer";
 import { Badge } from "@/components/ui/badge";
 import { useCreateReview, useCreateJobAlert } from "@workspace/api-client-react";
 import { JobCard } from "@/components/job-card";
+import { ClientOnly } from "@/components/client-only";
+import { SectionErrorBoundary } from "@/components/section-error-boundary";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Search, MapPin, Briefcase, Star, CheckCircle, UserCheck, Building2, Zap, ArrowRight, Mail, ShieldCheck, Lock, Send, Euro } from "lucide-react";
@@ -293,15 +295,17 @@ export default function Home() {
             </div>
 
             {/* Live job cards */}
-            {jobsLoading ? (
+            <ClientOnly fallback={
               <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
                 {[1,2,3].map(i => <div key={i} className="h-44 bg-muted rounded-xl animate-pulse" />)}
               </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-                {(jobs || []).slice(0, 6).map(job => <JobCard key={job.id} job={job} />)}
-              </div>
-            )}
+            }>
+              <SectionErrorBoundary>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                  {(jobs || []).slice(0, 6).map(job => <JobCard key={job.id} job={job} />)}
+                </div>
+              </SectionErrorBoundary>
+            </ClientOnly>
 
             <div className="text-center mt-8 flex gap-3 justify-center">
               <Button asChild size="lg">
@@ -352,23 +356,27 @@ export default function Home() {
               </Button>
             </div>
 
-            {jobsLoading ? (
+            <ClientOnly fallback={
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {[...Array(6)].map((_, i) => (
                   <div key={i} className="h-48 bg-muted rounded-xl animate-pulse" />
                 ))}
               </div>
-            ) : jobs && jobs.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {jobs.slice(0, 6).map(job => (
-                  <JobCard key={job.id} job={job} />
-                ))}
-              </div>
-            ) : (
-              <div className="text-center py-12">
-                <p className="text-muted-foreground text-lg">{tr("noJobsNow")}</p>
-              </div>
-            )}
+            }>
+              <SectionErrorBoundary>
+                {jobs && jobs.length > 0 ? (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {jobs.slice(0, 6).map(job => (
+                      <JobCard key={job.id} job={job} />
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-12">
+                    <p className="text-muted-foreground text-lg">{tr("noJobsNow")}</p>
+                  </div>
+                )}
+              </SectionErrorBoundary>
+            </ClientOnly>
           </div>
         </section>
 

@@ -2,6 +2,8 @@ import { NavBar } from "@/components/layout/navbar";
 import { useCreateJobAlert } from "@workspace/api-client-react";
 import { JobCard } from "@/components/job-card";
 import { ExternalJobCard, ExternalJob } from "@/components/external-job-card";
+import { ClientOnly } from "@/components/client-only";
+import { SectionErrorBoundary } from "@/components/section-error-boundary";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Search, MapPin, RefreshCw, ExternalLink, SlidersHorizontal, X, ChevronDown, Send } from "lucide-react";
@@ -526,14 +528,14 @@ export default function JobsPage() {
             </div>
           )}
 
-          {isLoading ? (
+          <ClientOnly fallback={
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {[...Array(8)].map((_, i) => (
                 <div key={i} className="h-52 bg-muted rounded-xl animate-pulse" />
               ))}
             </div>
-          ) : (
-            <>
+          }>
+            <SectionErrorBoundary>
               {localJobs.length > 0 && (
                 <>
                   <div className="flex items-center gap-2 mb-3">
@@ -570,8 +572,8 @@ export default function JobsPage() {
                   <Button onClick={reset}>{tr("viewAllJobs")}</Button>
                 </div>
               )}
-            </>
-          )}
+            </SectionErrorBoundary>
+          </ClientOnly>
 
           {/* Job alert signup */}
           <div className="mt-10 rounded-2xl bg-gradient-to-br from-blue-700 to-blue-900 text-white p-8 text-center">
