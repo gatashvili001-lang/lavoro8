@@ -285,7 +285,7 @@ export default function ExternalJobDetailPage() {
               <div
                 className="prose prose-sm max-w-none text-muted-foreground leading-relaxed text-[15px]"
                 dangerouslySetInnerHTML={{
-                  __html: getEnrichedDescription(job.title, job.company, job.location, job.category, job.description)
+                  __html: getEnrichedDescription(job.title, job.company, job.location, job.category, job.description, undefined, undefined, job.contractType)
                 }}
               />
             </div>

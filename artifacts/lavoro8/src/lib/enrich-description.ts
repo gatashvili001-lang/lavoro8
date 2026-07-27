@@ -3,48 +3,104 @@ export function getEnrichedDescription(
   company?: string | null,
   city?: string | null,
   category?: string | null,
-  rawDesc?: string | null
+  rawDesc?: string | null,
+  salaryMin?: number | null,
+  salaryMax?: number | null,
+  contractType?: string | null
 ): string {
   const cleanRaw = (rawDesc || "").trim();
-  const companyName = company || "Azienda Verificata";
-  const jobCity = city || "Europa";
-  const jobCat = category || "Logistica / Servizi";
+  const companyName = company || "Azienda Leader nel Settore";
+  const jobCity = city || "Italia / Europa";
+  const jobCat = category || "Logistica e Servizi";
+  const contract = contractType || "Tempo determinato / indeterminato";
+  const salaryText = salaryMin && salaryMax
+    ? `Retribuzione mensile lorda tra €${salaryMin} e €${salaryMax}`
+    : salaryMin
+    ? `Retribuzione a partire da €${salaryMin} al mese`
+    : "Retribuzione competitiva secondo CCNL di categoria";
 
-  // If raw description has rich content (> 100 chars), return clean raw HTML/text
-  if (cleanRaw.length >= 100) {
+  // If raw description is already an extensive HTML document (> 300 chars AND has headers), return clean raw HTML/text
+  if (cleanRaw.length >= 300 && (cleanRaw.includes("<h4>") || cleanRaw.includes("<h3") || cleanRaw.includes("<ul>"))) {
     return cleanRaw;
   }
 
-  // Structured Multi-Paragraph Template Generator for short / empty descriptions
+  // Extract key technical terms for tailored requirements
+  const isMagazzino = title.toLowerCase().includes("magazzin") || jobCat === "Magazzino";
+  const isDriver = title.toLowerCase().includes("driver") || title.toLowerCase().includes("autist") || title.toLowerCase().includes("rider") || jobCat === "Logistica";
+  const isRistorazione = jobCat === "Ristorante" || jobCat === "Hotel";
+  const isBadante = jobCat === "Badante" || jobCat === "Colf";
+
+  const customReqs = isMagazzino
+    ? "<li>Patentino per la conduzione di carrelli elevatori (Muletto) in corso di validità (preferenziale).</li><li>Capacità di utilizzo di pistole bar-code, palmari scanner e sistemi gestionali WMS.</li><li>Idoneità alla movimentazione manuale dei carichi e rispetto delle norme di sicurezza DPI.</li>"
+    : isDriver
+    ? "<li>Possesso di patente di guida di categoria adeguata (Patente B / C / CQC Merci) e punti patente intatti.</li><li>Conoscenza della viabilità locale e attitudine alla guida sicura ed efficiente.</li><li>Puntualità e precisione nella gestione dei documenti di trasporto (DDT / Bolle).</li>"
+    : isRistorazione
+    ? "<li>Certificazione HACCP in corso di validità e conoscenza delle norme di igiene alimentare.</li><li>Esperienza nella gestione del servizio in sala o preparazione alimenti in cucina professionale.</li><li>Ottima predisposizione al contatto con il pubblico, presenza curata e flessibilità sui turni.</li>"
+    : isBadante
+    ? "<li>Esperienza comprovata nell'assistenza domiciliare o residenziale a persone anziane o non autosufficienti.</li><li>Pazienza, empatia, serietà e ottime capacità d'ascolto e comunicazione.</li><li>Disponibilità alla gestione della casa, preparazione pasti ed eventuale regime convivente.</li>"
+    : "<li>Diploma di scuola secondary o qualifiche professionali equivalenti.</li><li>Precisione, affidabilità e capacità di lavorare in team per il raggiungimento degli obiettivi aziendali.</li><li>Flessibilità oraria e disponibilità immediata ad iniziare la prestazione lavorativa.</li>";
+
+  const openingOverview = cleanRaw.length > 20
+    ? `<p class="text-foreground font-medium text-[15px] mb-4 bg-muted/30 p-4 rounded-xl border border-muted-foreground/10">${cleanRaw}</p>`
+    : `<p class="text-foreground font-medium text-[15px] mb-4">L'azienda <strong>${companyName}</strong> seleziona una figura professionale motivata e qualificata per coprire il ruolo di <strong>${title}</strong> presso l'unità operativa di <strong>${jobCity}</strong>.</p>`;
+
   return `
-<div class="space-y-4">
-  <p>L'azienda <strong>${companyName}</strong> è alla ricerca di una figura professionale qualificata per ricoprire la posizione di <strong>${title}</strong> presso la sede di <strong>${jobCity}</strong>.</p>
+<div class="space-y-6">
+  ${openingOverview}
 
-  <h4 class="font-bold text-foreground text-base mt-4 mb-2">Responsabilità e Mansioni Principali:</h4>
-  <ul class="list-disc pl-5 space-y-1.5 text-muted-foreground">
-    <li>Esecuzione autonoma e precisa delle attività giornaliere legate al ruolo di ${title}.</li>
-    <li>Collaborazione con il team operativo e rispetto degli standard aziendali di qualità e sicurezza.</li>
-    <li>Gestione efficace delle mansioni assegnate e rendicontazione periodica dei risultati.</li>
-    <li>Mantenimento di un ambiente di lavoro organizzato, sicuro ed efficiente.</li>
-  </ul>
+  <div>
+    <h4 class="font-bold text-foreground text-base mb-2.5 flex items-center gap-2 border-b pb-2">
+      🏢 Informazioni sull'Azienda e Posizione Lavorativa
+    </h4>
+    <p class="text-muted-foreground leading-relaxed">
+      La risorsa inserita opererà all'interno di un contesto aziendale solido e strutturato. Per la sede di <strong>${jobCity}</strong>, l'opportunità come <strong>${title}</strong> prevede l'affiancamento iniziale con personale esperto, la formazione continua sui processi aziendali e la possibilità di consolidare la propria carriera professionale.
+    </p>
+  </div>
 
-  <h4 class="font-bold text-foreground text-base mt-4 mb-2">Requisiti Richiesti:</h4>
-  <ul class="list-disc pl-5 space-y-1.5 text-muted-foreground">
-    <li>Esperienza previa nel settore <strong>${jobCat}</strong> o in mansioni analoghe.</li>
-    <li>Disponibilità immediata e flessibilità oraria.</li>
-    <li>Attitudine al lavoro di squadra, puntualità e massima affidabilità.</li>
-    <li>Idoneità alle mansioni operative e buona capacità di risoluzione dei problemi.</li>
-  </ul>
+  <div>
+    <h4 class="font-bold text-foreground text-base mb-2.5 flex items-center gap-2 border-b pb-2">
+      📋 Responsabilità e Attività Principali
+    </h4>
+    <ul class="list-disc pl-5 space-y-2 text-muted-foreground leading-relaxed">
+      <li>Pianificazione ed esecuzione autonoma delle mansioni quotidiane collegate al ruolo di <strong>${title}</strong>.</li>
+      <li>Verifica della conformità delle attività svolte e rispetto dei tempi di consegna e standard qualitativi.</li>
+      <li>Collaborazione attiva con il team di lavoro e coordinamento con i responsabili di reparto.</li>
+      <li>Mantenimento dell'ordine, della pulizia e della sicurezza negli spazi di lavoro secondo le normative vigenti.</li>
+      <li>Segnalazione tempestiva di eventuali anomalie operative al fine di ottimizzare il flusso lavorativo.</li>
+    </ul>
+  </div>
 
-  <h4 class="font-bold text-foreground text-base mt-4 mb-2">Condizioni di Lavoro e Benefici:</h4>
-  <ul class="list-disc pl-5 space-y-1.5 text-muted-foreground">
-    <li><strong>Contratto:</strong> Contratto di lavoro regolare con inquadramento commisurato all'esperienza.</li>
-    <li><strong>Orario:</strong> Turni flessibili / Full-time secondo le esigenze aziendali.</li>
-    <li><strong>Sede di Lavoro:</strong> ${jobCity}.</li>
-  </ul>
+  <div>
+    <h4 class="font-bold text-foreground text-base mb-2.5 flex items-center gap-2 border-b pb-2">
+      🎓 Requisiti e Competenze Richieste
+    </h4>
+    <ul class="list-disc pl-5 space-y-2 text-muted-foreground leading-relaxed">
+      ${customReqs}
+      <li>Buone doti organizzative, spirito d'iniziativa e capacità di gestione dello stress nei momenti di picco.</li>
+      <li>Massima puntualità, serietà e forte motivazione personale.</li>
+    </ul>
+  </div>
 
-  <h4 class="font-bold text-foreground text-base mt-4 mb-2">Come Candidarsi:</h4>
-  <p class="text-muted-foreground">Puoi inviare la tua candidatura direttamente tramite la piattaforma <strong>lavoro8.com</strong> compilando il modulo online o allegando il tuo CV aggiornato. In alternativa, puoi utilizzare il nostro strumento gratuito per creare un CV Europeo in formato Europass.</p>
+  <div>
+    <h4 class="font-bold text-foreground text-base mb-2.5 flex items-center gap-2 border-b pb-2">
+      💰 Cosa Offriamo, Retribuzione e Benefit
+    </h4>
+    <ul class="list-disc pl-5 space-y-2 text-muted-foreground leading-relaxed">
+      <li><strong>Tipologia Contrattuale:</strong> ${contract}.</li>
+      <li><strong>Inquadramento Economico:</strong> ${salaryText}.</li>
+      <li><strong>Orario di Lavoro:</strong> Full-time / Turni distribuiti dal lunedì al venerdì con eventuali straordinari retribuiti.</li>
+      <li><strong>Ambiente di Lavoro:</strong> Contesto dinamico, sicuro e stimolante con dispositivi di protezione forniti dall'azienda.</li>
+    </ul>
+  </div>
+
+  <div>
+    <h4 class="font-bold text-foreground text-base mb-2.5 flex items-center gap-2 border-b pb-2">
+      ✉️ Come Candidarsi & Iter di Selezione
+    </h4>
+    <p class="text-muted-foreground leading-relaxed">
+      Gli interessati di entrambi i sessi (L.903/77) possono inviare la propria candidatura diretta su <strong>lavoro8.com</strong> cliccando sul pulsante <em>"Candidati Ora"</em>. Le candidature ricevute verranno esaminate dal team di selezione aziendale per un primo colloquio conoscitivo.
+    </p>
+  </div>
 </div>
 `.trim();
 }

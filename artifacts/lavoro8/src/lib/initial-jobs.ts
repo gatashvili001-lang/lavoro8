@@ -146,7 +146,7 @@ const RAW_INITIAL_REAL_JOBS: Job[] = [
 
 export const INITIAL_REAL_JOBS: Job[] = RAW_INITIAL_REAL_JOBS.map(j => ({
   ...j,
-  description: getEnrichedDescription(j.title, j.company, j.city, j.category, j.description)
+  description: getEnrichedDescription(j.title, j.company, j.city, j.category, j.description, j.salaryMin, j.salaryMax, j.contractType)
 }));
 
 // ─── Utility: safe array filter ───────────────────────────────────────────────
