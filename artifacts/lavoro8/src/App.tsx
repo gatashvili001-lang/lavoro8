@@ -310,7 +310,9 @@ function App() {
     <ErrorBoundary>
       <LangProvider>
         <WouterRouter base={basePath}>
-          <ClerkProviderWithRoutes />
+          <Suspense fallback={<RouteFallback />}>
+            <ClerkProviderWithRoutes />
+          </Suspense>
           <Analytics />
           <SpeedInsights />
         </WouterRouter>

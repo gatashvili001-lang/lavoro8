@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "wouter";
 import { useSavedJobs, toggleSaveJob } from "@/lib/saved-jobs";
 import { BookmarkCheck, Trash2, ExternalLink, MapPin, Building2, Briefcase, ArrowRight, X } from "lucide-react";
@@ -14,8 +14,25 @@ import {
 } from "@/components/ui/dialog";
 
 export function SavedJobsModal({ children }: { children?: React.ReactNode }) {
+  const [isMounted, setIsMounted] = useState(false);
   const savedJobs = useSavedJobs();
   const { lang } = useLang();
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  if (!isMounted) {
+    return (
+      <button
+        type="button"
+        className="relative flex items-center gap-1.5 text-sm font-semibold text-foreground/80"
+      >
+        <BookmarkCheck className="w-4 h-4 text-amber-500 fill-amber-500/20" />
+        <span className="hidden sm:inline">Offerte Salvate</span>
+      </button>
+    );
+  }
 
   return (
     <Dialog>

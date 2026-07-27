@@ -80,9 +80,13 @@ export function toggleSaveJob(job: {
 }
 
 export function useSavedJobs() {
-  const [savedJobs, setSavedJobs] = useState<SavedJobItem[]>(getSavedJobs());
+  const [savedJobs, setSavedJobs] = useState<SavedJobItem[]>([]);
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
+    setIsMounted(true);
+    setSavedJobs(getSavedJobs());
+
     function handleChange() {
       setSavedJobs(getSavedJobs());
     }
@@ -94,5 +98,5 @@ export function useSavedJobs() {
     };
   }, []);
 
-  return savedJobs;
+  return isMounted ? savedJobs : [];
 }
