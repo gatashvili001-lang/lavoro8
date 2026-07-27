@@ -36,6 +36,7 @@ import { useUser } from "@clerk/react";
 import { CvUpload } from "@/components/cv-upload";
 import { useLang } from "@/lib/lang-context";
 import { useSeo } from "@/lib/use-seo";
+import { getEnrichedDescription } from "@/lib/enrich-description";
 
 const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
 const SITE_URL = "https://lavoro8.com";
@@ -528,9 +529,12 @@ export default function JobDetailPage() {
               <CheckCircle2 className="w-5 h-5 text-primary" />
               {tr("jobDesc")}
             </h3>
-            <div className="whitespace-pre-wrap text-muted-foreground leading-relaxed text-[15px]">
-              {job.description}
-            </div>
+            <div
+              className="text-muted-foreground leading-relaxed text-[15px] prose prose-sm max-w-none"
+              dangerouslySetInnerHTML={{
+                __html: getEnrichedDescription(job.title, job.company, job.city, job.category, job.description)
+              }}
+            />
           </div>
 
           {/* CTA banner at bottom of description */}
