@@ -6,7 +6,8 @@ export function getEnrichedDescription(
   rawDesc?: string | null,
   salaryMin?: number | null,
   salaryMax?: number | null,
-  contractType?: string | null
+  contractType?: string | null,
+  lang: string = "it"
 ): string {
   const cleanRaw = (rawDesc || "").trim();
   const companyName = company || "Azienda Leader nel Settore";
@@ -14,13 +15,13 @@ export function getEnrichedDescription(
   const jobCat = category || "Logistica e Servizi";
   const contract = contractType || "Tempo determinato / indeterminato";
   const salaryText = salaryMin && salaryMax
-    ? `Retribuzione mensile lorda tra €${salaryMin} e €${salaryMax}`
+    ? `€${salaryMin} - €${salaryMax}`
     : salaryMin
-    ? `Retribuzione a partire da €${salaryMin} al mese`
-    : "Retribuzione competitiva secondo CCNL di categoria";
+    ? `da €${salaryMin}`
+    : "secondo CCNL";
 
-  // If raw description is already an extensive HTML document (> 300 chars AND has headers), return clean raw HTML/text
-  if (cleanRaw.length >= 300 && (cleanRaw.includes("<h4>") || cleanRaw.includes("<h3") || cleanRaw.includes("<ul>"))) {
+  // If raw description is already an extensive HTML document (> 300 chars AND has headers) and lang is 'it'
+  if (lang === "it" && cleanRaw.length >= 300 && (cleanRaw.includes("<h4>") || cleanRaw.includes("<h3") || cleanRaw.includes("<ul>"))) {
     return cleanRaw;
   }
 
@@ -30,7 +31,224 @@ export function getEnrichedDescription(
   const isRistorazione = jobCat === "Ristorante" || jobCat === "Hotel";
   const isBadante = jobCat === "Badante" || jobCat === "Colf";
 
-  const customReqs = isMagazzino
+  if (lang === "ka") {
+    // 🇬🇪 Georgian Translation
+    const customReqsKa = isMagazzino
+      ? "<li>სატვირთველის (მალეტო) მართვის მოქმედი მოწმობა (სასურველია).</li><li>შტრიხკოდების სკანერებთან და WMS სისტემებთან მუშაობის გამოცდილება.</li><li>ტვირთის უსაფრთხო გადაადგილება და უსაფრთხოების ნორმების დაცვა.</li>"
+      : isDriver
+      ? "<li>შესაბამისი კატეგორიის მართვის მოწმობა (B / C / CQC) და მართვის გამოცდილება.</li><li>ადგილობრივი გზების კარგი ცოდნა და უსაფრთხო მართვის უნარი.</li><li>პუნქტუალურობა და სატრანსპორტო საბუთების (DDT / Bolle) სიზუსტე.</li>"
+      : isRistorazione
+      ? "<li>მოქმედი HACCP სერტიფიკატი და სურსათის ჰიგიენის ნორმების ცოდნა.</li><li>სტუმრების მომსახურების ან სამზარეულოში მუშაობის გამოცდილება.</li><li>კომუნიკაბელურობა, მოწესრიგებული გარეგნობა და ცვლილებში მუშაობის მზაობა.</li>"
+      : isBadante
+      ? "<li>ხანდაზმულთა ან მოვლის საჭიროების მქონე პირთა მოვლის გამოცდილება.</li><li>მოთმინება, ემპათია, პასუხისმგებლობა და ყურადღებიანობა.</li><li>საოჯახო საქმეების გაძღოლა, კერძების მომზადება და მეთვალყურეობა.</li>"
+      : "<li>საშუალო ან პროფესიული განათლება.</li><li>პუნქტუალურობა, საიმედოობა და გუნდური მუშაობის უნარი.</li><li>მოქნილი გრაფიკი და სამუშაოს დაუყოვნებლივ დაწყების მზაობა.</li>";
+
+    return `
+<div class="space-y-6">
+  <p class="text-foreground font-medium text-[15px] mb-4 bg-blue-50/50 p-4 rounded-xl border border-blue-100">
+    კომპანია <strong>${companyName}</strong> აცხადებს ვაკანსიას პოზიციაზე: <strong>${title}</strong>, ქალაქში: <strong>${jobCity}</strong>.
+  </p>
+
+  <div>
+    <h4 class="font-bold text-foreground text-base mb-2.5 flex items-center gap-2 border-b pb-2">
+      🏢 ინფორმაცია კომპანიასა და პოზიციაზე
+    </h4>
+    <p class="text-muted-foreground leading-relaxed">
+      კომპანია გთავაზობთ სტაბილურ და ორგანიზებულ სამუშაო გარემოს <strong>${jobCity}</strong>-ში. პოზიცია <strong>${title}</strong> ითვალისწინებს საწყის სწავლებას გამოცდილ პერსონალთან ერთად და კარიერული ზრდის შესაძლებლობას.
+    </p>
+  </div>
+
+  <div>
+    <h4 class="font-bold text-foreground text-base mb-2.5 flex items-center gap-2 border-b pb-2">
+      📋 ძირითადი მოვალეობები და პასუხისმგებლობები
+    </h4>
+    <ul class="list-disc pl-5 space-y-2 text-muted-foreground leading-relaxed">
+      <li>ყოველდღიური დავალებების დამოუკიდებლად და ხარისხიანად შესრულება.</li>
+      <li>სამუშაო პროცესის სტანდარტებისა და უსაფრთხოების ნორმების დაცვა.</li>
+      <li>გუნდთან მჭიდრო თანამშრომლობა და ხელმძღვანელთან კოორდინაცია.</li>
+      <li>სამუშაო სივრცის წესრიგისა და სისუფთავის შენარჩუნება.</li>
+    </ul>
+  </div>
+
+  <div>
+    <h4 class="font-bold text-foreground text-base mb-2.5 flex items-center gap-2 border-b pb-2">
+      🎓 საკვალიფიკაციო მოთხოვნები
+    </h4>
+    <ul class="list-disc pl-5 space-y-2 text-muted-foreground leading-relaxed">
+      ${customReqsKa}
+      <li>ორგანიზებულობა, პასუხისმგებლობის მაღალი გრძნობა და სტრესულ გარემოში მუშაობის უნარი.</li>
+    </ul>
+  </div>
+
+  <div>
+    <h4 class="font-bold text-foreground text-base mb-2.5 flex items-center gap-2 border-b pb-2">
+      💰 სამუშაო პირობები და ანაზღაურება
+    </h4>
+    <ul class="list-disc pl-5 space-y-2 text-muted-foreground leading-relaxed">
+      <li><strong>კონტრაქტი:</strong> ${contract}.</li>
+      <li><strong>ანაზღაურება:</strong> ${salaryText} თვეში.</li>
+      <li><strong>სამუშაო ადგილი:</strong> ${jobCity}.</li>
+    </ul>
+  </div>
+
+  <div>
+    <h4 class="font-bold text-foreground text-base mb-2.5 flex items-center gap-2 border-b pb-2">
+      ✉️ განაცხადის შევსების წესი
+    </h4>
+    <p class="text-muted-foreground leading-relaxed">
+      დაინტერესებულ პირებს შეგიძლიათ გააგზავნოთ განაცხადი <strong>lavoro8.com</strong>-ზე ღილაკით <em>"Candidati Ora"</em>. ასევე შეგიძლიათ გამოიყენოთ ჩვენი უფასო ევროპული CV-ს აწყობის ინსტრუმენტი (Europass CV Builder).
+    </p>
+  </div>
+</div>
+`.trim();
+  }
+
+  if (lang === "uk") {
+    // 🇺🇦 Ukrainian Translation
+    const customReqsUk = isMagazzino
+      ? "<li>Дійсне посвідчення водія навантажувача (Muletto).</li><li>Навички работы зі сканерами штрих-кодів та системами WMS.</li><li>Дотримання правил техніки безпеки та охорони праці.</li>"
+      : isDriver
+      ? "<li>Посвідчення водія відповідної категорії (B / C / CQC).</li><li>Знання місцевих доріг та навички безпечного водіння.</li><li>Пунктуальність та точність при роботі з транспортними документами (DDT).</li>"
+      : isRistorazione
+      ? "<li>Дійсний сертифікат HACCP та знання норм гігієни харчування.</li><li>Досвід обслуговування гостей або роботи на кухні.</li><li>Ввічливість, охайний зовнішній вигляд та гнучкість.</li>"
+      : isBadante
+      ? "<li>Досвід догляду за людьми похилого віку або людьми, що потребують допомоги.</li><li>Терпіння, емпатія та відповідальність.</li><li>Ведення домашнього господарства, приготування їжі.</li>"
+      : "<li>Cередня або професійна освіта.</li><li>Пунктуальність, надійність та вміння працювати в команді.</li><li>Гнучкий графік та готовність приступити до роботи.</li>";
+
+    return `
+<div class="space-y-6">
+  <p class="text-foreground font-medium text-[15px] mb-4 bg-blue-50/50 p-4 rounded-xl border border-blue-100">
+    Компанія <strong>${companyName}</strong> відкриває вакансію на позицію: <strong>${title}</strong> у місті: <strong>${jobCity}</strong>.
+  </p>
+
+  <div>
+    <h4 class="font-bold text-foreground text-base mb-2.5 flex items-center gap-2 border-b pb-2">
+      🏢 Інформація про компанію та вакансію
+    </h4>
+    <p class="text-muted-foreground leading-relaxed">
+      Робота в стабільній компанії в місті <strong>${jobCity}</strong>. Позиція <strong>${title}</strong> передбачає початковий інструктаж та можливість професійного зростання.
+    </p>
+  </div>
+
+  <div>
+    <h4 class="font-bold text-foreground text-base mb-2.5 flex items-center gap-2 border-b pb-2">
+      📋 Основні обов'язки
+    </h4>
+    <ul class="list-disc pl-5 space-y-2 text-muted-foreground leading-relaxed">
+      <li>Якісне та своєчасне виконання щоденних завдань.</li>
+      <li>Дотримання стандартів компанії та норм безпеки.</li>
+      <li>Командна робота та взаємодія з керівництвом.</li>
+      <li>Підтримання порядку на робочому місці.</li>
+    </ul>
+  </div>
+
+  <div>
+    <h4 class="font-bold text-foreground text-base mb-2.5 flex items-center gap-2 border-b pb-2">
+      🎓 Вимоги до кандидата
+    </h4>
+    <ul class="list-disc pl-5 space-y-2 text-muted-foreground leading-relaxed">
+      ${customReqsUk}
+      <li>Організованість, відповідальність та стійкість до стресів.</li>
+    </ul>
+  </div>
+
+  <div>
+    <h4 class="font-bold text-foreground text-base mb-2.5 flex items-center gap-2 border-b pb-2">
+      💰 Умови роботи та оплата
+    </h4>
+    <ul class="list-disc pl-5 space-y-2 text-muted-foreground leading-relaxed">
+      <li><strong>Контракт:</strong> ${contract}.</li>
+      <li><strong>Заробітна плата:</strong> ${salaryText} на місяць.</li>
+      <li><strong>Локація:</strong> ${jobCity}.</li>
+    </ul>
+  </div>
+
+  <div>
+    <h4 class="font-bold text-foreground text-base mb-2.5 flex items-center gap-2 border-b pb-2">
+      ✉️ Як подати заявку
+    </h4>
+    <p class="text-muted-foreground leading-relaxed">
+      Надішліть вашу заявку безпосередньо на <strong>lavoro8.com</strong> натиснувши <em>"Candidati Ora"</em>. Ви також можете безкоштовно створити європейське резюме (Europass CV).
+    </p>
+  </div>
+</div>
+`.trim();
+  }
+
+  if (lang === "en") {
+    // 🇬🇧 English Translation
+    const customReqsEn = isMagazzino
+      ? "<li>Valid Forklift certification (Muletto preferred).</li><li>Experience with barcode scanners, handheld devices, and WMS software.</li><li>Ability to perform manual material handling following safety guidelines.</li>"
+      : isDriver
+      ? "<li>Valid driver's license (Category B / C / CQC) with clean driving record.</li><li>Local route knowledge and safe driving mindset.</li><li>Punctuality and accurate management of shipping bills (DDT).</li>"
+      : isRistorazione
+      ? "<li>Valid HACCP certificate and knowledge of food safety standards.</li><li>Experience in table service or professional kitchen environment.</li><li>Great customer-facing skills and schedule flexibility.</li>"
+      : isBadante
+      ? "<li>Proven experience in elderly or home care assistance.</li><li>Patience, empathy, and strong communication skills.</li><li>Housekeeping, meal preparation, and live-in availability if needed.</li>"
+      : "<li>Secondary school diploma or equivalent qualification.</li><li>Precision, reliability, and team working skills.</li><li>Immediate availability and flexible working hours.</li>";
+
+    return `
+<div class="space-y-6">
+  <p class="text-foreground font-medium text-[15px] mb-4 bg-muted/30 p-4 rounded-xl border border-muted-foreground/10">
+    Company <strong>${companyName}</strong> is recruiting a qualified professional for the position of <strong>${title}</strong> in <strong>${jobCity}</strong>.
+  </p>
+
+  <div>
+    <h4 class="font-bold text-foreground text-base mb-2.5 flex items-center gap-2 border-b pb-2">
+      🏢 Company Overview & Role
+    </h4>
+    <p class="text-muted-foreground leading-relaxed">
+      Join a well-established team in <strong>${jobCity}</strong> as a <strong>${title}</strong>. The role includes initial training alongside senior staff and long-term career growth opportunities.
+    </p>
+  </div>
+
+  <div>
+    <h4 class="font-bold text-foreground text-base mb-2.5 flex items-center gap-2 border-b pb-2">
+      📋 Key Responsibilities
+    </h4>
+    <ul class="list-disc pl-5 space-y-2 text-muted-foreground leading-relaxed">
+      <li>Autonomous execution of daily tasks related to the role of ${title}.</li>
+      <li>Ensuring compliance with company quality standards and safety regulations.</li>
+      <li>Collaborating effectively with team members and report supervisors.</li>
+      <li>Maintaining a clean, safe, and organized working environment.</li>
+    </ul>
+  </div>
+
+  <div>
+    <h4 class="font-bold text-foreground text-base mb-2.5 flex items-center gap-2 border-b pb-2">
+      🎓 Requirements & Qualifications
+    </h4>
+    <ul class="list-disc pl-5 space-y-2 text-muted-foreground leading-relaxed">
+      ${customReqsEn}
+      <li>Organizational skills, initiative, and ability to handle peak workloads.</li>
+    </ul>
+  </div>
+
+  <div>
+    <h4 class="font-bold text-foreground text-base mb-2.5 flex items-center gap-2 border-b pb-2">
+      💰 Benefits & Working Conditions
+    </h4>
+    <ul class="list-disc pl-5 space-y-2 text-muted-foreground leading-relaxed">
+      <li><strong>Contract Type:</strong> ${contract}.</li>
+      <li><strong>Salary:</strong> ${salaryText} per month.</li>
+      <li><strong>Location:</strong> ${jobCity}.</li>
+    </ul>
+  </div>
+
+  <div>
+    <h4 class="font-bold text-foreground text-base mb-2.5 flex items-center gap-2 border-b pb-2">
+      ✉️ How to Apply
+    </h4>
+    <p class="text-muted-foreground leading-relaxed">
+      Submit your application on <strong>lavoro8.com</strong> by clicking <em>"Candidati Ora"</em>. You can also build your free Italian Europass CV directly on our platform.
+    </p>
+  </div>
+</div>
+`.trim();
+  }
+
+  // Default 🇮🇹 Italian
+  const customReqsIt = isMagazzino
     ? "<li>Patentino per la conduzione di carrelli elevatori (Muletto) in corso di validità (preferenziale).</li><li>Capacità di utilizzo di pistole bar-code, palmari scanner e sistemi gestionali WMS.</li><li>Idoneità alla movimentazione manuale dei carichi e rispetto delle norme di sicurezza DPI.</li>"
     : isDriver
     ? "<li>Possesso di patente di guida di categoria adeguata (Patente B / C / CQC Merci) e punti patente intatti.</li><li>Conoscenza della viabilità locale e attitudine alla guida sicura ed efficiente.</li><li>Puntualità e precisione nella gestione dei documenti di trasporto (DDT / Bolle).</li>"
@@ -38,7 +256,7 @@ export function getEnrichedDescription(
     ? "<li>Certificazione HACCP in corso di validità e conoscenza delle norme di igiene alimentare.</li><li>Esperienza nella gestione del servizio in sala o preparazione alimenti in cucina professionale.</li><li>Ottima predisposizione al contatto con il pubblico, presenza curata e flessibilità sui turni.</li>"
     : isBadante
     ? "<li>Esperienza comprovata nell'assistenza domiciliare o residenziale a persone anziane o non autosufficienti.</li><li>Pazienza, empatia, serietà e ottime capacità d'ascolto e comunicazione.</li><li>Disponibilità alla gestione della casa, preparazione pasti ed eventuale regime convivente.</li>"
-    : "<li>Diploma di scuola secondary o qualifiche professionali equivalenti.</li><li>Precisione, affidabilità e capacità di lavorare in team per il raggiungimento degli obiettivi aziendali.</li><li>Flessibilità oraria e disponibilità immediata ad iniziare la prestazione lavorativa.</li>";
+    : "<li>Diploma di scuola secondaria o qualifiche professionali equivalenti.</li><li>Precisione, affidabilità e capacità di lavorare in team per il raggiungimento degli obiettivi aziendali.</li><li>Flessibilità oraria e disponibilità immediata ad iniziare la prestazione lavorativa.</li>";
 
   const openingOverview = cleanRaw.length > 20
     ? `<p class="text-foreground font-medium text-[15px] mb-4 bg-muted/30 p-4 rounded-xl border border-muted-foreground/10">${cleanRaw}</p>`
@@ -75,7 +293,7 @@ export function getEnrichedDescription(
       🎓 Requisiti e Competenze Richieste
     </h4>
     <ul class="list-disc pl-5 space-y-2 text-muted-foreground leading-relaxed">
-      ${customReqs}
+      ${customReqsIt}
       <li>Buone doti organizzative, spirito d'iniziativa e capacità di gestione dello stress nei momenti di picco.</li>
       <li>Massima puntualità, serietà e forte motivazione personale.</li>
     </ul>

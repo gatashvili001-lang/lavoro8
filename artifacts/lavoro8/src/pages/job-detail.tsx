@@ -36,7 +36,7 @@ import { useUser } from "@clerk/react";
 import { CvUpload } from "@/components/cv-upload";
 import { useLang } from "@/lib/lang-context";
 import { useSeo } from "@/lib/use-seo";
-import { getEnrichedDescription } from "@/lib/enrich-description";
+import { JobDescriptionWidget } from "@/components/job-description-widget";
 
 const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
 const SITE_URL = "https://lavoro8.com";
@@ -523,19 +523,18 @@ export default function JobDetailPage() {
             <SocialShareWidget title={job.title} city={job.city} />
           </div>
 
-          {/* Description */}
-          <div className="p-7 md:p-10">
-            <h3 className="font-display text-xl font-bold mb-5 flex items-center gap-2">
-              <CheckCircle2 className="w-5 h-5 text-primary" />
-              {tr("jobDesc")}
-            </h3>
-            <div
-              className="text-muted-foreground leading-relaxed text-[15px] prose prose-sm max-w-none"
-              dangerouslySetInnerHTML={{
-                __html: getEnrichedDescription(job.title, job.company, job.city, job.category, job.description, job.salaryMin, job.salaryMax, job.contractType)
-              }}
-            />
-          </div>
+          {/* Description with Translator Widget */}
+          <JobDescriptionWidget
+            title={job.title}
+            company={job.company}
+            city={job.city}
+            category={job.category}
+            description={job.description}
+            salaryMin={job.salaryMin}
+            salaryMax={job.salaryMax}
+            contractType={job.contractType}
+            defaultLang={lang}
+          />
 
           {/* CTA banner at bottom of description */}
           <div className="hidden md:block px-7 md:px-10 pb-8">

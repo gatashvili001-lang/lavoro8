@@ -7,7 +7,7 @@ import { MapPin, Building2, Briefcase, ExternalLink, ArrowLeft, Clock, Globe, Ta
 import { ExternalJob } from "@/components/external-job-card";
 import { useSeo } from "@/lib/use-seo";
 import { useLang } from "@/lib/lang-context";
-import { getEnrichedDescription } from "@/lib/enrich-description";
+import { JobDescriptionWidget } from "@/components/job-description-widget";
 
 const BASE_URL = import.meta.env.BASE_URL.replace(/\/$/, "");
 const SITE_URL = "https://lavoro8.com";
@@ -279,16 +279,16 @@ export default function ExternalJobDetailPage() {
               </div>
             </div>
 
-            {/* Description */}
-            <div className="bg-background rounded-2xl border shadow-sm p-6 md:p-8">
-              <h2 className="text-xl font-bold font-display mb-4">{tr("jobDescriptionLabel")}</h2>
-              <div
-                className="prose prose-sm max-w-none text-muted-foreground leading-relaxed text-[15px]"
-                dangerouslySetInnerHTML={{
-                  __html: getEnrichedDescription(job.title, job.company, job.location, job.category, job.description, undefined, undefined, job.contractType)
-                }}
-              />
-            </div>
+            {/* Description with Translator Widget */}
+            <JobDescriptionWidget
+              title={job.title}
+              company={job.company}
+              city={job.location}
+              category={job.category}
+              description={job.description}
+              contractType={job.contractType}
+              defaultLang={lang}
+            />
 
 
             {/* Bottom CTA */}
