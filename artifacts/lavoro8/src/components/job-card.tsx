@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "wouter";
 import { formatJobSalary } from "@/lib/format";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
@@ -66,12 +66,34 @@ function relativeDate(dateStr?: string | null, lang: string = "it"): string {
 }
 
 export function JobCard({ job }: { job: Job }) {
+  const [isMounted, setIsMounted] = useState(false);
   const { tr, lang } = useLang();
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
   if (!job) return null;
-  const catColor = CATEGORY_COLORS[job.category ?? "Altro"] ?? CATEGORY_COLORS.Altro;
+
+  const title = job.title || "Offerta di lavoro";
+  const company = job.company || "Azienda Verificata";
+  const city = job.city || "Italia";
+  const country = job.country || "IT";
+  const category = job.category || "Altro";
+  const catColor = CATEGORY_COLORS[category] ?? CATEGORY_COLORS.Altro;
   const hasSalary = Boolean(job.salaryMin && job.salaryMin > 0);
   const daysOld = job.createdAt ? Math.floor((Date.now() - new Date(job.createdAt).getTime()) / 86400000) : 999;
   const isNew = daysOld <= 2;
+
+  if (!isMounted) {
+    return (
+      <Card className="flex flex-col h-full border-border bg-background relative rounded-2xl p-5 shadow-sm">
+        <div className="h-5 bg-muted/60 rounded w-3/4 mb-3 animate-pulse" />
+        <div className="h-4 bg-muted/40 rounded w-1/2 mb-4 animate-pulse" />
+        <div className="h-8 bg-muted/30 rounded w-full mt-auto animate-pulse" />
+      </Card>
+    );
+  }
 
   return (
     <Card className="hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group flex flex-col h-full border-border hover:border-primary/40 bg-background relative rounded-2xl">
@@ -86,35 +108,31 @@ export function JobCard({ job }: { job: Job }) {
       <CardContent className="p-5 flex-1">
         <div className="flex items-start justify-between gap-3 mb-3">
           <h3 className="font-display font-bold text-base leading-tight group-hover:text-primary transition-colors line-clamp-2 flex-1">
-            <Link href={`/jobs/${job.id}`}>{job.title}</Link>
+            <Link href={`/jobs/${job.id}`}>{title}</Link>
           </h3>
           <div className="flex items-center gap-1.5 shrink-0">
             <BookmarkButton job={job} />
             <Badge className={`text-[11px] font-semibold border ${catColor} bg-opacity-80`}>
-              {job.category || "Altro"}
+              {category}
             </Badge>
           </div>
         </div>
 
         <div className="space-y-1.5 text-sm text-muted-foreground mb-4">
-          {job.company && (
-            <div className="flex items-center gap-1.5 flex-wrap">
-              <Building2 className="w-3.5 h-3.5 text-primary/60 shrink-0" />
-              <span className="font-semibold text-foreground truncate">{job.company}</span>
-              <span className="inline-flex items-center gap-0.5 text-[10px] font-bold text-blue-700 bg-blue-50 border border-blue-200 px-1.5 py-0.5 rounded-full shrink-0">
-                <ShieldCheck className="w-3 h-3 text-blue-600" /> Azienda Verificata
-              </span>
-            </div>
-          )}
+          <div className="flex items-center gap-1.5 flex-wrap">
+            <Building2 className="w-3.5 h-3.5 text-primary/60 shrink-0" />
+            <span className="font-semibold text-foreground truncate">{company}</span>
+            <span className="inline-flex items-center gap-0.5 text-[10px] font-bold text-blue-700 bg-blue-50 border border-blue-200 px-1.5 py-0.5 rounded-full shrink-0">
+              <ShieldCheck className="w-3 h-3 text-blue-600" /> Azienda Verificata
+            </span>
+          </div>
           <div className="flex items-center gap-1.5">
             <MapPin className="w-3.5 h-3.5 text-primary/60 shrink-0" />
-            <span className="truncate">{job.city || "Italia"}</span>
-            {job.country && (
-              <span className="flex items-center gap-1 ml-1 shrink-0">
-                <CircleFlag country={job.country} size={14} />
-                <span className="text-xs">{job.country}</span>
-              </span>
-            )}
+            <span className="truncate">{city}</span>
+            <span className="flex items-center gap-1 ml-1 shrink-0">
+              <CircleFlag country={country} size={14} />
+              <span className="text-xs">{country}</span>
+            </span>
           </div>
           {job.contractType && (
             <div className="flex items-center gap-1.5">
@@ -127,7 +145,7 @@ export function JobCard({ job }: { job: Job }) {
         {hasSalary && (
           <div className="inline-flex items-center gap-1.5 bg-green-50 border border-green-200 rounded-lg px-3 py-1.5">
             <span className="text-sm font-bold text-green-700">
-              {formatJobSalary(job.salaryMin, job.country)} – {formatJobSalary(job.salaryMax, job.country)}
+              {formatJobSalary(job.salaryMin, country)} – {formatJobSalary(job.salaryMax, country)}
             </span>
             <span className="text-xs text-green-600">{tr("perMonthLabel")}</span>
           </div>

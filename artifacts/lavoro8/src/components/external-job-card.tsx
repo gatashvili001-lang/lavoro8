@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from "react";
 import { Link } from "wouter";
 import { MapPin, Building2, Briefcase, ArrowRight, Tag, Wifi } from "lucide-react";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
@@ -51,27 +52,53 @@ function CircleFlag({ country, size = 16 }: { country: string; size?: number }) 
 }
 
 function relativeDate(dateStr: string, lang: string): string {
-  const days = Math.floor((Date.now() - new Date(dateStr).getTime()) / 86400000);
-  if (days === 0) return lang === "it" ? "Oggi" : lang === "de" ? "Heute" : lang === "fr" ? "Aujourd'hui" : lang === "es" ? "Hoy" : "Today";
-  if (days === 1) return lang === "it" ? "Ieri" : lang === "de" ? "Gestern" : lang === "fr" ? "Hier" : lang === "es" ? "Ayer" : "Yesterday";
-  if (days < 7) return lang === "it" ? `${days} giorni fa` : lang === "de" ? `vor ${days} Tagen` : lang === "fr" ? `il y a ${days} jours` : `${days} days ago`;
-  return new Date(dateStr).toLocaleDateString(lang, { day: "numeric", month: "short" });
+  if (!dateStr) return lang === "it" ? "Oggi" : "Today";
+  try {
+    const days = Math.floor((Date.now() - new Date(dateStr).getTime()) / 86400000);
+    if (days <= 0) return lang === "it" ? "Oggi" : lang === "de" ? "Heute" : lang === "fr" ? "Aujourd'hui" : lang === "es" ? "Hoy" : "Today";
+    if (days === 1) return lang === "it" ? "Ieri" : lang === "de" ? "Gestern" : lang === "fr" ? "Hier" : lang === "es" ? "Ayer" : "Yesterday";
+    if (days < 7) return lang === "it" ? `${days} giorni fa` : lang === "de" ? `vor ${days} Tagen` : lang === "fr" ? `il y a ${days} jours` : `${days} days ago`;
+    return new Date(dateStr).toLocaleDateString(lang || "it", { day: "numeric", month: "short" });
+  } catch {
+    return lang === "it" ? "Oggi" : "Today";
+  }
 }
 
 export function ExternalJobCard({ job }: { job: ExternalJob }) {
+  const [isMounted, setIsMounted] = useState(false);
   const { lang, tr } = useLang();
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
   if (!job) return null;
-  const detailPath = `/jobs/ext/${encodeURIComponent(job.id)}`;
+
+  const title = job.title || "Offerta di lavoro";
+  const company = job.company || job.sourceName || "Azienda Verificata";
+  const location = job.location || "Europa";
+  const country = job.country || "IT";
+  const detailPath = `/jobs/ext/${encodeURIComponent(job.id || "1")}`;
   const snippet = job.description
     ? job.description.replace(/<[^>]+>/g, "").slice(0, 120).trim() + "…"
     : null;
+
+  if (!isMounted) {
+    return (
+      <Card className="flex flex-col h-full border-border bg-background relative overflow-hidden rounded-2xl p-5 shadow-sm">
+        <div className="h-5 bg-muted/60 rounded w-3/4 mb-3 animate-pulse" />
+        <div className="h-4 bg-muted/40 rounded w-1/2 mb-4 animate-pulse" />
+        <div className="h-8 bg-muted/30 rounded w-full mt-auto animate-pulse" />
+      </Card>
+    );
+  }
 
   return (
     <Card className="hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group flex flex-col h-full border-border hover:border-blue-400 bg-background relative overflow-hidden rounded-2xl">
       <div className="absolute top-0 right-0 flex items-center gap-1.5 z-10 p-2">
         <BookmarkButton job={job} />
         <span className="bg-blue-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-lg shadow-sm">
-          {job.sourceName}
+          {job.sourceName || "External"}
         </span>
       </div>
 
@@ -80,72 +107,66 @@ export function ExternalJobCard({ job }: { job: ExternalJob }) {
           {job.logo ? (
             <img
               src={job.logo}
-              alt={job.company}
+              alt={company}
               className="w-10 h-10 rounded-lg object-contain border bg-white p-1 shrink-0"
               onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
             />
           ) : (
             <div className="w-10 h-10 rounded-lg bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600 font-bold text-sm shrink-0">
-              {job.company?.[0]?.toUpperCase() ?? "J"}
+              {company?.[0]?.toUpperCase() ?? "J"}
             </div>
           )}
           <div className="min-w-0 flex-1 pr-10">
             <Link href={detailPath}>
               <h3 className="font-bold text-base leading-tight mb-1 group-hover:text-blue-600 transition-colors line-clamp-2">
-                {job.title}
+                {title}
               </h3>
             </Link>
             <div className="flex items-center gap-1 text-sm text-muted-foreground">
               <Building2 className="w-3.5 h-3.5 shrink-0" />
-              <span className="font-medium text-foreground truncate">{job.company}</span>
+              <span className="font-medium text-foreground truncate">{company}</span>
             </div>
           </div>
         </div>
 
         <div className="flex flex-col gap-1.5 text-sm text-muted-foreground mb-3">
           <div className="flex items-center gap-1.5">
-            <MapPin className="w-3.5 h-3.5 shrink-0" />
-            <span className="truncate">{job.location}</span>
-            <CircleFlag country={job.country} size={14} />
+            <MapPin className="w-3.5 h-3.5 text-blue-500 shrink-0" />
+            <span className="truncate">{location}</span>
+            <CircleFlag country={country} size={16} />
           </div>
-          <div className="flex items-center gap-1.5 flex-wrap">
-            <Briefcase className="w-3.5 h-3.5 shrink-0" />
-            <span>{job.contractType}</span>
-            {job.remote && (
-              <Badge variant="outline" className="text-[10px] py-0 h-4 text-green-600 border-green-300 flex items-center gap-0.5">
-                <Wifi className="w-2.5 h-2.5" /> Remote
-              </Badge>
-            )}
-          </div>
+          {job.contractType && (
+            <div className="flex items-center gap-1.5">
+              <Briefcase className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
+              <span>{job.contractType}</span>
+            </div>
+          )}
         </div>
 
         {snippet && (
-          <p className="text-xs text-muted-foreground line-clamp-2 italic mb-2 leading-relaxed">
+          <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed mb-3 bg-muted/30 p-2 rounded-lg border border-border/40">
             {snippet}
           </p>
         )}
 
-        {job.tags.length > 0 && (
-          <div className="flex flex-wrap gap-1 mt-1">
-            {job.tags.slice(0, 3).map(tag => (
-              <span key={tag} className="inline-flex items-center gap-0.5 text-[10px] bg-blue-50 text-blue-700 rounded px-1.5 py-0.5 border border-blue-100">
-                <Tag className="w-2.5 h-2.5" />
-                {tag}
-              </span>
+        {job.tags && job.tags.length > 0 && (
+          <div className="flex flex-wrap gap-1 mt-auto">
+            {job.tags.slice(0, 3).map((t, idx) => (
+              <Badge key={idx} variant="secondary" className="text-[10px] px-2 py-0">
+                {t}
+              </Badge>
             ))}
           </div>
         )}
       </CardContent>
 
-      <CardFooter className="px-5 pb-4 pt-3 border-t border-border/40 bg-muted/10 flex justify-between items-center">
-        <span className="text-xs text-muted-foreground">
-          {relativeDate(job.postedAt, lang)}
-        </span>
+      <CardFooter className="px-5 pb-4 pt-3 border-t border-border/40 bg-muted/20 flex justify-between items-center">
+        <span className="text-xs text-muted-foreground">{relativeDate(job.postedAt, lang)}</span>
         <Link
           href={detailPath}
-          className="text-sm font-semibold text-blue-600 flex items-center gap-1 hover:gap-2 transition-all hover:text-blue-700"
+          className="text-sm font-semibold text-blue-600 flex items-center gap-1 hover:gap-2 transition-all"
         >
-          {tr("applyNow")} <ArrowRight className="w-3.5 h-3.5" />
+          {tr("applyNow")} <ArrowRight className="w-4 h-4" />
         </Link>
       </CardFooter>
     </Card>
