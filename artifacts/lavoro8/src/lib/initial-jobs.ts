@@ -14,13 +14,15 @@ export interface Job {
   createdAt: string;
 }
 
+import { getEnrichedDescription } from "./enrich-description";
+
 function daysAgo(n: number): string {
   const d = new Date();
   d.setDate(d.getDate() - n);
   return d.toISOString();
 }
 
-export const INITIAL_REAL_JOBS: Job[] = [
+const RAW_INITIAL_REAL_JOBS: Job[] = [
   // ─── ITALIA (65% DEL TOTALE - 68 VACANZE) ───
   { id: 2001, title: "Magazziniere con Patentino Muletto (Carrellista)", company: "DHL Express Italy — Piacenza Hub", city: "Piacenza", country: "IT", category: "Magazzino", salaryMin: 1450, salaryMax: 1750, contractType: "Tempo indeterminato", description: "DHL Express cerca addetti al magazzino con patentino muletto per l'hub logistico di Piacenza. Movimentazione bancali, spunta bolle e gestione scanner.", email: "carriere@dhl.it", createdAt: daysAgo(0) },
   { id: 2002, title: "Operatore Logistica — Smistamento Pacchi", company: "GLS General Logistics Systems", city: "Bologna", country: "IT", category: "Logistica", salaryMin: 1380, salaryMax: 1600, contractType: "Tempo determinato", description: "GLS ricerca operatori logistica per il centro di smistamento di Bologna. Smistamento nastri automatizzati e preparazione spedizioni.", email: "hr@gls-italy.com", createdAt: daysAgo(1) },
@@ -141,6 +143,11 @@ export const INITIAL_REAL_JOBS: Job[] = [
   { id: 2210, title: "Kargo Depo Görevlisi", company: "Trendyol Express", city: "Istanbul", country: "TR", category: "Magazzino", salaryMin: 22000, salaryMax: 28000, contractType: "Tam Zamanlı", description: "Paket ayrıştırma ve dağıtım merkezinde araç yükleme işlemleri.", email: "kariyer@trendyol.com", createdAt: daysAgo(0) },
   { id: 2211, title: "Shpërndarës Pako Express", company: "Posta Shqiptare", city: "Tirana", country: "AL", category: "Logistica", salaryMin: 55000, salaryMax: 70000, contractType: "Me kohë të plotë", description: "Shpërndarja e letrave dhe pakove urgjente në rajonin e Tiranës.", email: "hr@postashqiptare.al", createdAt: daysAgo(2) }
 ];
+
+export const INITIAL_REAL_JOBS: Job[] = RAW_INITIAL_REAL_JOBS.map(j => ({
+  ...j,
+  description: getEnrichedDescription(j.title, j.company, j.city, j.category, j.description)
+}));
 
 // ─── Utility: safe array filter ───────────────────────────────────────────────
 export function safeFilter(jobs: Job[], opts: {
