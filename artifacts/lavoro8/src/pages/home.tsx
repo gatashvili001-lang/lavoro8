@@ -152,6 +152,28 @@ export default function Home() {
                 </Link>
               ))}
             </div>
+
+            <div className="flex flex-wrap justify-center items-center gap-2 mt-4 text-xs text-white/80">
+              <span className="font-medium text-white/60">Filtra per paese:</span>
+              {[
+                { code: "IT", name: "Italia 🇮🇹" },
+                { code: "DE", name: "Germania 🇩🇪" },
+                { code: "FR", name: "Francia 🇫🇷" },
+                { code: "ES", name: "Spagna 🇪🇸" },
+                { code: "CH", name: "Svizzera 🇨🇭" },
+                { code: "NL", name: "Olanda 🇳🇱" },
+                { code: "PL", name: "Polonia 🇵🇱" },
+                { code: "EU", name: "Tutta Europa 🇪🇺" },
+              ].map((c) => (
+                <Link
+                  key={c.code}
+                  href={`/jobs?country=${c.code}`}
+                  className="bg-white/10 hover:bg-white/20 text-white px-2.5 py-1 rounded-full border border-white/20 transition-all font-medium"
+                >
+                  {c.name}
+                </Link>
+              ))}
+            </div>
           </div>
         </section>
 

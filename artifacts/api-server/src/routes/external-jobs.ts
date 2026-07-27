@@ -35,7 +35,7 @@ export interface ExternalJob {
 }
 
 let cache: { jobs: ExternalJob[]; fetchedAt: number } | null = null;
-const CACHE_TTL = 30 * 60 * 1000; // 30 minutes TTL for active freshness
+const CACHE_TTL = 30 * 60 * 1000;
 
 function inferCountry(location: string): string {
   const loc = location.toLowerCase();
@@ -186,13 +186,50 @@ async function fetchJobicy(): Promise<ExternalJob[]> {
   }
 }
 
+async function fetchRemotive(): Promise<ExternalJob[]> {
+  try {
+    const res = await fetch("https://remotive.com/api/remote-jobs?limit=50", {
+      signal: AbortSignal.timeout(8000),
+      headers: { "User-Agent": "lavoro8.com aggregator" },
+    });
+    if (!res.ok) return [];
+    const data = (await res.json()) as any;
+    const jobsList = data.jobs || [];
+    return jobsList.map((j: any): ExternalJob => ({
+      id: `rem-${j.id}`,
+      title: j.title,
+      company: j.company_name || "Azienda Verificata",
+      location: j.candidate_required_location || "Europa",
+      country: inferCountry(j.candidate_required_location || ""),
+      category: inferCategory(j.tags || [], j.title, [j.job_type || ""], j.description?.slice(0, 200) ?? ""),
+      contractType: inferContract([j.job_type || ""]),
+      url: j.url,
+      logo: j.company_logo,
+      source: j.url,
+      sourceName: "Remotive",
+      remote: true,
+      tags: (j.tags || []).slice(0, 4),
+      postedAt: j.publication_date ? new Date(j.publication_date).toISOString() : new Date().toISOString(),
+      description: j.description,
+    }));
+  } catch {
+    return [];
+  }
+}
+
 async function getExternalJobs(forceRefresh = false): Promise<ExternalJob[]> {
   if (!forceRefresh && cache && Date.now() - cache.fetchedAt < CACHE_TTL) return cache.jobs;
-  const [r1, r2, r3] = await Promise.allSettled([fetchArbeitnow(), fetchRemoteOK(), fetchJobicy()]);
+  const [r1, r2, r3, r4] = await Promise.allSettled([
+    fetchArbeitnow(),
+    fetchRemoteOK(),
+    fetchJobicy(),
+    fetchRemotive(),
+  ]);
   const jobs: ExternalJob[] = [
     ...(r1.status === "fulfilled" ? r1.value : []),
     ...(r2.status === "fulfilled" ? r2.value : []),
     ...(r3.status === "fulfilled" ? r3.value : []),
+    ...(r4.status === "fulfilled" ? r4.value : []),
   ];
   cache = { jobs, fetchedAt: Date.now() };
   return jobs;
@@ -204,7 +241,7 @@ router.all(["/cron/fetch-jobs", "/api/cron/fetch-jobs"], async (req, res) => {
     const freshJobs = await getExternalJobs(true);
     res.json({
       success: true,
-      message: "Automated cron job ingestion executed successfully",
+      message: "Automated cron Pan-European job ingestion executed successfully",
       count: freshJobs.length,
       timestamp: new Date().toISOString(),
     });
