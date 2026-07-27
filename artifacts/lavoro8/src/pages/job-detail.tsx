@@ -166,14 +166,60 @@ export default function JobDetailPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useSeo({
-    title: job ? `${job.title} — ${job.city}` : tr("jobNotFoundSeo"),
+    title: job ? `${job.title} a ${job.city} - Offerte di Lavoro | lavoro8.com` : tr("jobNotFoundSeo"),
     description: job
-      ? `${job.title} ${tr("jobAdAt")} ${job.company ?? tr("jobAdDefaultCompany")} ${tr("extJobIn")} ${job.city}. ${(job.description ?? "").slice(0, 140)}`
+      ? `Cerca lavoro come ${job.title} a ${job.city}? Consulta le ultime offerte di lavoro aggiornate oggi su lavoro8.com e crea il tuo CV Europass gratis.`
       : tr("jobAdUnavailableSeo"),
     path: job ? `/jobs/${job.id}` : undefined,
     noindex: !job,
     type: "article",
   });
+
+  useEffect(() => {
+    if (!job) return;
+
+    const schemaData = {
+      "@context": "https://schema.org/",
+      "@type": "JobPosting",
+      "title": job.title,
+      "description": job.description || job.title,
+      "identifier": {
+        "@type": "PropertyValue",
+        "name": "lavoro8.com",
+        "value": String(job.id)
+      },
+      "datePosted": job.createdAt || new Date().toISOString(),
+      "validThrough": new Date(Date.now() + 60 * 24 * 60 * 60 * 1000).toISOString(),
+      "employmentType": (job.contractType || "FULL_TIME").toUpperCase().replace("-", "_"),
+      "hiringOrganization": {
+        "@type": "Organization",
+        "name": job.company || "Azienda Verificata",
+        "sameAs": "https://lavoro8.com"
+      },
+      "jobLocation": {
+        "@type": "Place",
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": job.city || "Italia",
+          "addressCountry": job.country || "IT"
+        }
+      }
+    };
+
+    const existing = document.getElementById("jobposting-schema-jsonld");
+    if (existing) existing.remove();
+
+    const script = document.createElement("script");
+    script.type = "application/ld+json";
+    script.id = "jobposting-schema-jsonld";
+    script.textContent = JSON.stringify(schemaData);
+    document.head.appendChild(script);
+
+    return () => {
+      const el = document.getElementById("jobposting-schema-jsonld");
+      if (el) el.remove();
+    };
+  }, [job]);
 
   useEffect(() => {
     if (!job) return;
