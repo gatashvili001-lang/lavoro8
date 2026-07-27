@@ -43,7 +43,7 @@ export function NavBar() {
             {tr("allJobs")}
           </Link>
           <Link href="/crea-cv" className={`text-sm font-semibold flex items-center gap-1 transition-colors ${isActive("/crea-cv") ? "text-emerald-700 font-bold" : "text-emerald-600 hover:text-emerald-800"}`}>
-            <FileText className="w-3.5 h-3.5" /> Crea CV
+            <FileText className="w-3.5 h-3.5" /> {tr("createCv")}
           </Link>
           <Link href="/blog" className={linkCls("/blog")}>
             Blog
@@ -123,7 +123,7 @@ export function NavBar() {
             onClick={() => setMenuOpen(false)}
           >
             <FileText className="w-4 h-4 text-emerald-600" />
-            Crea CV Gratis
+            {tr("createCvGratis")}
           </Link>
           <Link
             href="/blog"

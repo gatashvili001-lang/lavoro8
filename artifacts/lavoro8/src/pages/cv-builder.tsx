@@ -192,21 +192,21 @@ export default function CvBuilderPage() {
         <div className="print:hidden flex flex-wrap items-center justify-between gap-4 mb-6">
           <div>
             <Link href="/" className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground mb-1 transition-colors">
-              <ArrowLeft className="w-4 h-4" /> Torna alla Home
+              <ArrowLeft className="w-4 h-4" /> {tr("backToHome")}
             </Link>
-            <h1 className="text-3xl font-bold font-display text-foreground flex items-center gap-2">
+            <h1 className="text-2xl md:text-3xl font-bold font-display text-foreground flex items-center gap-2">
               <FileText className="w-7 h-7 text-primary" />
-              Crea il tuo CV Europeo Gratis
+              {tr("cvBuilderTitle")}
             </h1>
-            <p className="text-sm text-muted-foreground">Compila i tuoi dati e scarica istantaneamente il tuo Curriculum Vitae in PDF.</p>
+            <p className="text-sm text-muted-foreground">{tr("cvBuilderSubtitle")}</p>
           </div>
 
           <div className="flex items-center gap-3">
             <Button variant="outline" onClick={saveDraft} className="gap-1.5">
-              Salva Bozza
+              {tr("saveDraft")}
             </Button>
             <Button onClick={handlePrint} className="gap-2 bg-green-600 hover:bg-green-700 text-white font-semibold">
-              <Download className="w-4 h-4" /> Scarica CV in PDF
+              <Download className="w-4 h-4" /> {tr("downloadCvPdf")}
             </Button>
           </div>
         </div>
@@ -220,40 +220,40 @@ export default function CvBuilderPage() {
             {/* 1. Dati Personali */}
             <div className="bg-background rounded-2xl border p-6 shadow-sm space-y-4">
               <h2 className="text-lg font-bold font-display text-foreground flex items-center gap-2 border-b pb-3">
-                <User className="w-5 h-5 text-primary" /> Dati Personali
+                <User className="w-5 h-5 text-primary" /> {tr("personalDetails")}
               </h2>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-xs font-semibold text-muted-foreground">Nome *</label>
+                  <label className="text-xs font-semibold text-muted-foreground">{tr("firstName")} *</label>
                   <Input value={firstName} onChange={e => setFirstName(e.target.value)} placeholder="es. Mario" className="mt-1" />
                 </div>
                 <div>
-                  <label className="text-xs font-semibold text-muted-foreground">Cognome *</label>
+                  <label className="text-xs font-semibold text-muted-foreground">{tr("lastName")} *</label>
                   <Input value={lastName} onChange={e => setLastName(e.target.value)} placeholder="es. Rossi" className="mt-1" />
                 </div>
                 <div>
-                  <label className="text-xs font-semibold text-muted-foreground">Email *</label>
+                  <label className="text-xs font-semibold text-muted-foreground">{tr("emailLabel")}</label>
                   <Input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="mario.rossi@gmail.com" className="mt-1" />
                 </div>
                 <div>
-                  <label className="text-xs font-semibold text-muted-foreground">Telefono / WhatsApp *</label>
+                  <label className="text-xs font-semibold text-muted-foreground">{tr("phoneLabel")}</label>
                   <Input value={phone} onChange={e => setPhone(e.target.value)} placeholder="+39 340 1234567" className="mt-1" />
                 </div>
                 <div>
-                  <label className="text-xs font-semibold text-muted-foreground">Città ed Indirizzo *</label>
+                  <label className="text-xs font-semibold text-muted-foreground">{tr("city")} *</label>
                   <Input value={city} onChange={e => setCity(e.target.value)} placeholder="Milano (MI)" className="mt-1" />
                 </div>
                 <div>
-                  <label className="text-xs font-semibold text-muted-foreground">Patente di Guida</label>
+                  <label className="text-xs font-semibold text-muted-foreground">{tr("drivingLicenseLabel")}</label>
                   <Input value={drivingLicense} onChange={e => setDrivingLicense(e.target.value)} placeholder="Patente B / Auto propria" className="mt-1" />
                 </div>
               </div>
               <div>
-                <label className="text-xs font-semibold text-muted-foreground">Lingue Parlate</label>
+                <label className="text-xs font-semibold text-muted-foreground">{tr("languagesLabel")}</label>
                 <Input value={languages} onChange={e => setLanguages(e.target.value)} placeholder="Italiano (Madrelingua), Inglese (B1), Georgiano" className="mt-1" />
               </div>
               <div>
-                <label className="text-xs font-semibold text-muted-foreground">Presentazione Sintetica</label>
+                <label className="text-xs font-semibold text-muted-foreground">{tr("summaryLabel")}</label>
                 <Textarea value={summary} onChange={e => setSummary(e.target.value)} placeholder="Breve sintesi del tuo profilo professionale e disponibilità lavorativa..." className="mt-1 min-h-[70px]" />
               </div>
             </div>
@@ -262,17 +262,17 @@ export default function CvBuilderPage() {
             <div className="bg-background rounded-2xl border p-6 shadow-sm space-y-4">
               <div className="flex items-center justify-between border-b pb-3">
                 <h2 className="text-lg font-bold font-display text-foreground flex items-center gap-2">
-                  <Briefcase className="w-5 h-5 text-primary" /> Esperienze Lavorative
+                  <Briefcase className="w-5 h-5 text-primary" /> {tr("workExperiences")}
                 </h2>
                 <Button size="sm" variant="outline" onClick={addExperience} className="gap-1 h-8 text-xs">
-                  <Plus className="w-3.5 h-3.5" /> Aggiungi
+                  <Plus className="w-3.5 h-3.5" /> {tr("addExperience")}
                 </Button>
               </div>
 
               {experiences.map((exp, index) => (
                 <div key={exp.id} className="p-4 border rounded-xl bg-muted/20 relative space-y-3">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Esperienza #{index + 1}</span>
+                    <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground"># {index + 1}</span>
                     {experiences.length > 1 && (
                       <button onClick={() => removeExperience(exp.id)} className="text-destructive hover:text-red-700 p-1">
                         <Trash2 className="w-4 h-4" />
@@ -294,10 +294,10 @@ export default function CvBuilderPage() {
             <div className="bg-background rounded-2xl border p-6 shadow-sm space-y-4">
               <div className="flex items-center justify-between border-b pb-3">
                 <h2 className="text-lg font-bold font-display text-foreground flex items-center gap-2">
-                  <GraduationCap className="w-5 h-5 text-primary" /> Istruzione & Attestati
+                  <GraduationCap className="w-5 h-5 text-primary" /> {tr("educationSection")}
                 </h2>
                 <Button size="sm" variant="outline" onClick={addEducation} className="gap-1 h-8 text-xs">
-                  <Plus className="w-3.5 h-3.5" /> Aggiungi
+                  <Plus className="w-3.5 h-3.5" /> {tr("addEducation")}
                 </Button>
               </div>
 
@@ -323,12 +323,12 @@ export default function CvBuilderPage() {
             {/* 4. Competenze & Qualifiche */}
             <div className="bg-background rounded-2xl border p-6 shadow-sm space-y-4">
               <h2 className="text-lg font-bold font-display text-foreground flex items-center gap-2 border-b pb-3">
-                <Award className="w-5 h-5 text-primary" /> Competenze & Qualifiche
+                <Award className="w-5 h-5 text-primary" /> {tr("skillsSection")}
               </h2>
               <div className="flex gap-2">
                 <Input value={newSkill} onChange={e => setNewSkill(e.target.value)} placeholder="Aggiungi una competenza (es. HACCP, Muletto)..." />
                 <Button onClick={addSkill} size="sm" variant="secondary" className="shrink-0 font-semibold">
-                  Aggiungi
+                  {tr("addSkill")}
                 </Button>
               </div>
 
