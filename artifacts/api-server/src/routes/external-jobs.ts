@@ -35,7 +35,7 @@ export interface ExternalJob {
 }
 
 let cache: { jobs: ExternalJob[]; fetchedAt: number } | null = null;
-const CACHE_TTL = 60 * 60 * 1000;
+const CACHE_TTL = 30 * 60 * 1000; // 30 minutes TTL for active freshness
 
 function inferCountry(location: string): string {
   const loc = location.toLowerCase();
@@ -78,7 +78,7 @@ function inferCategory(tags: string[], title: string, types: string[], desc: str
   if (text.match(/babysit|baby.sit|childcare|nanny|bambini|kinderpflege|garde.enfant/)) return "Baby-sitter";
   if (text.match(/warehouse|magazzin|lager|storekeeper|picking|packing|forklift|muletto/)) return "Magazzino";
   if (text.match(/logistic|trasport|driver|truck|fahr|chauffeur|spedition|delivery.*driver|consegna|camion/)) return "Logistica";
-  if (text.match(/rider|courier|corriere|fahrrad|fahrradkurier|bote|food.*deliver|lieferbote/)) return "Rider";
+  if (text.match(/rider|corriere|fahrrad|fahrradkurier|bote|food.*deliver|lieferbote/)) return "Rider";
   if (text.match(/restaurant|cook|chef|kitchen|cucin|food|gastro|ristorante|barista|kellner|waiter|waitress|camerier/)) return "Ristorante";
   if (text.match(/hotel|hospitality|reception|housekeep|albergo|zimmer|cleaning.*hotel|pulizie.*hotel/)) return "Hotel";
   if (text.match(/factory|produz|manufacturing|assembly|fabbric|operaio|production.*line|montag/)) return "Magazzino";
@@ -99,7 +99,7 @@ function inferContract(types: string[]): string {
 async function fetchArbeitnow(): Promise<ExternalJob[]> {
   const res = await fetch("https://www.arbeitnow.com/api/job-board-api", {
     signal: AbortSignal.timeout(8000),
-    headers: { "User-Agent": "lavoro.it aggregator" },
+    headers: { "User-Agent": "lavoro8.com aggregator" },
   });
   if (!res.ok) throw new Error(`Arbeitnow ${res.status}`);
   const data = (await res.json()) as { data: ArbeitnowJob[] };
@@ -126,13 +126,13 @@ async function fetchRemoteOK(): Promise<ExternalJob[]> {
   try {
     const res = await fetch("https://remoteok.com/api", {
       signal: AbortSignal.timeout(8000),
-      headers: { "User-Agent": "lavoro.it aggregator" },
+      headers: { "User-Agent": "lavoro8.com aggregator" },
     });
     if (!res.ok) return [];
     const data = (await res.json()) as any[];
     return data
-      .filter(j => j.company && j.position)
-      .slice(0, 40)
+      .filter(j => j && j.company && j.position)
+      .slice(0, 50)
       .map((j): ExternalJob => ({
         id: `rok-${j.id || j.slug}`,
         title: j.position,
@@ -155,16 +155,63 @@ async function fetchRemoteOK(): Promise<ExternalJob[]> {
   }
 }
 
-async function getExternalJobs(): Promise<ExternalJob[]> {
-  if (cache && Date.now() - cache.fetchedAt < CACHE_TTL) return cache.jobs;
-  const [r1, r2] = await Promise.allSettled([fetchArbeitnow(), fetchRemoteOK()]);
+async function fetchJobicy(): Promise<ExternalJob[]> {
+  try {
+    const res = await fetch("https://jobicy.com/api/v2/remote-jobs?count=50", {
+      signal: AbortSignal.timeout(8000),
+      headers: { "User-Agent": "lavoro8.com aggregator" },
+    });
+    if (!res.ok) return [];
+    const data = (await res.json()) as any;
+    const jobsList = data.jobs || [];
+    return jobsList.map((j: any): ExternalJob => ({
+      id: `jby-${j.id}`,
+      title: j.jobTitle,
+      company: j.companyName || "Azienda Verificata",
+      location: j.jobGeo || "Europa",
+      country: inferCountry(j.jobGeo || ""),
+      category: inferCategory(j.jobCategory ? [j.jobCategory] : [], j.jobTitle, [j.jobType || ""], j.jobDescription?.slice(0, 200) ?? ""),
+      contractType: inferContract([j.jobType || ""]),
+      url: j.url,
+      logo: j.companyLogo,
+      source: j.url,
+      sourceName: "Jobicy",
+      remote: true,
+      tags: [j.jobCategory, j.jobLevel].filter(Boolean),
+      postedAt: j.pubDate ? new Date(j.pubDate).toISOString() : new Date().toISOString(),
+      description: j.jobDescription,
+    }));
+  } catch {
+    return [];
+  }
+}
+
+async function getExternalJobs(forceRefresh = false): Promise<ExternalJob[]> {
+  if (!forceRefresh && cache && Date.now() - cache.fetchedAt < CACHE_TTL) return cache.jobs;
+  const [r1, r2, r3] = await Promise.allSettled([fetchArbeitnow(), fetchRemoteOK(), fetchJobicy()]);
   const jobs: ExternalJob[] = [
     ...(r1.status === "fulfilled" ? r1.value : []),
     ...(r2.status === "fulfilled" ? r2.value : []),
+    ...(r3.status === "fulfilled" ? r3.value : []),
   ];
   cache = { jobs, fetchedAt: Date.now() };
   return jobs;
 }
+
+// Cron route handler for automated background job ingestion
+router.all(["/cron/fetch-jobs", "/api/cron/fetch-jobs"], async (req, res) => {
+  try {
+    const freshJobs = await getExternalJobs(true);
+    res.json({
+      success: true,
+      message: "Automated cron job ingestion executed successfully",
+      count: freshJobs.length,
+      timestamp: new Date().toISOString(),
+    });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
 
 router.get("/external-jobs", async (req, res) => {
   try {

@@ -4,6 +4,12 @@
   "buildCommand": "pnpm --filter @workspace/lavoro8 run build",
   "outputDirectory": "artifacts/lavoro8/dist",
   "installCommand": "pnpm install",
+  "crons": [
+    {
+      "path": "/api/cron/fetch-jobs",
+      "schedule": "0 8,18 * * *"
+    }
+  ],
   "headers": [
     {
       "source": "/index.html",
