@@ -37,6 +37,8 @@ import { CvUpload } from "@/components/cv-upload";
 import { useLang } from "@/lib/lang-context";
 import { useSeo } from "@/lib/use-seo";
 import { getEnrichedDescription } from "@/lib/enrich-description";
+import { BookmarkButton } from "@/components/bookmark-button";
+import { JobAlertWidget } from "@/components/job-alert-widget";
 
 const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
 const SITE_URL = "https://lavoro8.com";
@@ -455,7 +457,10 @@ export default function JobDetailPage() {
             <ArrowLeft className="w-4 h-4" />
             {tr("allJobs")}
           </Link>
-          <ShareButton title={job.title} city={job.city} />
+          <div className="flex items-center gap-2">
+            <BookmarkButton job={job} variant="button" />
+            <ShareButton title={job.title} city={job.city} />
+          </div>
         </div>
 
         <div className="bg-background rounded-2xl border shadow-sm overflow-hidden">
@@ -557,6 +562,11 @@ export default function JobDetailPage() {
               {applyDialog}
             </div>
           </div>
+        </div>
+
+        {/* Job Alert Subscription */}
+        <div className="mt-8">
+          <JobAlertWidget />
         </div>
       </main>
 

@@ -5,9 +5,10 @@ import { useCreateReview, useCreateJobAlert } from "@workspace/api-client-react"
 import { JobCard } from "@/components/job-card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Search, MapPin, Briefcase, Star, CheckCircle, UserCheck, Building2, Zap, ArrowRight, Mail, ShieldCheck, Lock, Send } from "lucide-react";
+import { Search, MapPin, Briefcase, Star, CheckCircle, UserCheck, Building2, Zap, ArrowRight, Mail, ShieldCheck, Lock, Send, Euro } from "lucide-react";
 import { useState } from "react";
 import { useLocation, Link } from "wouter";
+import { JobAlertWidget } from "@/components/job-alert-widget";
 import { useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
 import { Textarea } from "@/components/ui/textarea";
@@ -35,6 +36,8 @@ export default function Home() {
   const { tr } = useLang();
   const [search, setSearch] = useState("");
   const [city, setCity] = useState("");
+  const [minSalary, setMinSalary] = useState("0");
+  const [contractType, setContractType] = useState("ALL");
   const [, setLocation] = useLocation();
 
   const jobs = useLiveJobs();
@@ -64,11 +67,13 @@ export default function Home() {
     { step: "3", title: tr("step3Title"), desc: tr("step3Desc"), icon: Zap },
   ];
 
-  const handleSearch = (e: React.FormEvent) => {
+  function handleSearch(e: React.FormEvent) {
     e.preventDefault();
     const params = new URLSearchParams();
     if (search) params.set("search", search);
     if (city) params.set("city", city);
+    if (minSalary && minSalary !== "0") params.set("minSalary", minSalary);
+    if (contractType && contractType !== "ALL") params.set("contractType", contractType);
     setLocation(`/jobs?${params.toString()}`);
   };
 
@@ -115,29 +120,65 @@ export default function Home() {
               {tr("heroSubtitle")}
             </p>
 
-            <form onSubmit={handleSearch} className="bg-white p-2 rounded-2xl flex flex-col md:flex-row gap-2 shadow-2xl border border-white/20">
-              <div className="flex-1 relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground w-5 h-5" />
-                <Input
-                  placeholder={tr("searchPlaceholder")}
-                  className="pl-10 border-none bg-transparent shadow-none text-base h-12 focus-visible:ring-0"
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                />
+            <form onSubmit={handleSearch} className="bg-white p-3 rounded-2xl flex flex-col gap-2 shadow-2xl border border-white/20">
+              <div className="flex flex-col md:flex-row gap-2">
+                <div className="flex-1 relative">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground w-5 h-5" />
+                  <Input
+                    placeholder={tr("searchPlaceholder")}
+                    className="pl-10 border-none bg-transparent shadow-none text-base h-12 focus-visible:ring-0"
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                  />
+                </div>
+                <div className="w-px bg-border hidden md:block self-stretch my-2" />
+                <div className="flex-1 relative">
+                  <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground w-5 h-5" />
+                  <Input
+                    placeholder={tr("cityPlaceholder")}
+                    className="pl-10 border-none bg-transparent shadow-none text-base h-12 focus-visible:ring-0"
+                    value={city}
+                    onChange={(e) => setCity(e.target.value)}
+                  />
+                </div>
+                <Button type="submit" size="lg" className="h-12 px-8 text-base shrink-0">
+                  {tr("searchBtn")}
+                </Button>
               </div>
-              <div className="w-px bg-border hidden md:block self-stretch my-2" />
-              <div className="flex-1 relative">
-                <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground w-5 h-5" />
-                <Input
-                  placeholder={tr("cityPlaceholder")}
-                  className="pl-10 border-none bg-transparent shadow-none text-base h-12 focus-visible:ring-0"
-                  value={city}
-                  onChange={(e) => setCity(e.target.value)}
-                />
+
+              {/* Advanced Filters */}
+              <div className="flex flex-col sm:flex-row items-center gap-2 pt-2 border-t border-slate-100">
+                <div className="flex items-center gap-1.5 bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-200 text-xs font-semibold text-slate-700 w-full sm:w-1/2">
+                  <Euro className="w-4 h-4 text-emerald-600 shrink-0" />
+                  <select
+                    value={minSalary}
+                    onChange={(e) => setMinSalary(e.target.value)}
+                    className="bg-transparent border-none outline-none w-full cursor-pointer text-slate-800 font-semibold text-xs"
+                  >
+                    <option value="0">Stipendio: Tutti</option>
+                    <option value="1000">Min. €1.000 / mese</option>
+                    <option value="1500">Min. €1.500 / mese</option>
+                    <option value="2000">Min. €2.000 / mese</option>
+                    <option value="2500">Min. €2.500 / mese</option>
+                  </select>
+                </div>
+
+                <div className="flex items-center gap-1.5 bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-200 text-xs font-semibold text-slate-700 w-full sm:w-1/2">
+                  <Briefcase className="w-4 h-4 text-blue-600 shrink-0" />
+                  <select
+                    value={contractType}
+                    onChange={(e) => setContractType(e.target.value)}
+                    className="bg-transparent border-none outline-none w-full cursor-pointer text-slate-800 font-semibold text-xs"
+                  >
+                    <option value="ALL">Contratto: Tutti</option>
+                    <option value="Tempo indeterminato">Tempo Indeterminato</option>
+                    <option value="Tempo determinato">Tempo Determinato</option>
+                    <option value="Full-time">Full-Time</option>
+                    <option value="Part-time">Part-Time</option>
+                    <option value="Remote">Remote</option>
+                  </select>
+                </div>
               </div>
-              <Button type="submit" size="lg" className="h-12 px-8 text-base shrink-0">
-                {tr("searchBtn")}
-              </Button>
             </form>
 
             <div className="flex flex-wrap justify-center gap-2 mt-6 text-sm text-white/70">

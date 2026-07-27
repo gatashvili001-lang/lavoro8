@@ -3,6 +3,7 @@ import { MapPin, Building2, Briefcase, ArrowRight, Tag, Wifi } from "lucide-reac
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useLang } from "@/lib/lang-context";
+import { BookmarkButton } from "@/components/bookmark-button";
 
 const FLAG_CDN = "https://hatscripts.github.io/circle-flags/flags";
 
@@ -66,8 +67,11 @@ export function ExternalJobCard({ job }: { job: ExternalJob }) {
 
   return (
     <Card className="hover:shadow-md transition-all group flex flex-col h-full border-border hover:border-blue-300 relative overflow-hidden">
-      <div className="absolute top-0 right-0 bg-blue-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-bl-lg z-10">
-        {job.sourceName}
+      <div className="absolute top-0 right-0 flex items-center gap-1.5 z-10 p-2">
+        <BookmarkButton job={job} />
+        <span className="bg-blue-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-lg shadow-sm">
+          {job.sourceName}
+        </span>
       </div>
 
       <CardContent className="p-5 flex-1">

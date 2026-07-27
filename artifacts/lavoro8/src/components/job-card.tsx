@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { MapPin, Building2, Briefcase, ArrowRight, Clock, Sparkles, ShieldCheck } from "lucide-react";
 import { Job } from "@workspace/api-client-react";
 import { useLang } from "@/lib/lang-context";
+import { BookmarkButton } from "@/components/bookmark-button";
 
 const FLAG_CDN = "https://hatscripts.github.io/circle-flags/flags";
 
@@ -86,9 +87,12 @@ export function JobCard({ job }: { job: Job }) {
           <h3 className="font-display font-bold text-base leading-tight group-hover:text-primary transition-colors line-clamp-2 flex-1">
             <Link href={`/jobs/${job.id}`}>{job.title}</Link>
           </h3>
-          <Badge className={`shrink-0 text-[11px] font-semibold border ${catColor} bg-opacity-80`}>
-            {job.category || "Altro"}
-          </Badge>
+          <div className="flex items-center gap-1.5 shrink-0">
+            <BookmarkButton job={job} />
+            <Badge className={`text-[11px] font-semibold border ${catColor} bg-opacity-80`}>
+              {job.category || "Altro"}
+            </Badge>
+          </div>
         </div>
 
         <div className="space-y-1.5 text-sm text-muted-foreground mb-4">

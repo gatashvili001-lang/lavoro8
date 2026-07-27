@@ -111,6 +111,8 @@ export default function JobsPage() {
   const [cityInput, setCityInput] = useState(searchParams.get("city") || "");
   const [category, setCategory] = useState(searchParams.get("category") || "Tutte");
   const [country, setCountry] = useState(searchParams.get("country") || "ALL");
+  const [minSalary, setMinSalary] = useState(searchParams.get("minSalary") || "0");
+  const [contractType, setContractType] = useState(searchParams.get("contractType") || "ALL");
 
   const searchString = useSearch();
   const selfWrittenQs = useRef<string | null>(null);
@@ -121,6 +123,8 @@ export default function JobsPage() {
     setCountry(p.get("country") || "ALL");
     setSearchInput(p.get("search") || "");
     setCityInput(p.get("city") || "");
+    setMinSalary(p.get("minSalary") || "0");
+    setContractType(p.get("contractType") || "ALL");
   }, [searchString]);
   const [showExternal, setShowExternal] = useState(true);
   const [sort, setSort] = useState("recent");
@@ -153,9 +157,11 @@ export default function JobsPage() {
     if (city) params.set("city", city);
     if (category && category !== "Tutte") params.set("category", category);
     if (country && country !== "ALL") params.set("country", country);
+    if (minSalary && minSalary !== "0") params.set("minSalary", minSalary);
+    if (contractType && contractType !== "ALL") params.set("contractType", contractType);
     selfWrittenQs.current = params.toString();
     window.history.replaceState(null, "", `/jobs${params.toString() ? `?${params.toString()}` : ""}`);
-  }, [search, city, category, country]);
+  }, [search, city, category, country, minSalary, contractType]);
 
   const localJobsRaw = useLiveJobs();
   const localLoading = false;
@@ -167,7 +173,19 @@ export default function JobsPage() {
   });
 
   const baseLocalList = Array.isArray(localJobsRaw) ? localJobsRaw : [];
-  const filteredLocalJobs = safeFilter(baseLocalList, { category, country, city, search });
+  const filteredLocalJobs = safeFilter(baseLocalList, { category, country, city, search }).filter(j => {
+    if (minSalary && minSalary !== "0") {
+      const minVal = parseInt(minSalary, 10);
+      const sal = j.salaryMax ?? j.salaryMin ?? 0;
+      if (sal < minVal) return false;
+    }
+    if (contractType && contractType !== "ALL") {
+      const ct = (j.contractType || "").toLowerCase();
+      const targetCt = contractType.toLowerCase();
+      if (!ct.includes(targetCt) && !targetCt.includes(ct)) return false;
+    }
+    return true;
+  });
 
   const localJobs = [...filteredLocalJobs].sort((a, b) => {
     if (sort === "salary_desc") return (b.salaryMax ?? 0) - (a.salaryMax ?? 0);
@@ -193,6 +211,8 @@ export default function JobsPage() {
     setCityInput("");
     setCategory("Tutte");
     setCountry("ALL");
+    setMinSalary("0");
+    setContractType("ALL");
     setSort("recent");
   }, []);
 
@@ -271,6 +291,39 @@ export default function JobsPage() {
               ))}
             </div>
           )}
+        </div>
+
+        {/* Salary Filter */}
+        <div className="space-y-2">
+          <label className="text-sm font-semibold text-foreground">Stipendio Minimo</label>
+          <select
+            value={minSalary}
+            onChange={(e) => setMinSalary(e.target.value)}
+            className="w-full bg-background border rounded-lg px-3 py-2 text-xs font-semibold text-foreground cursor-pointer focus:ring-2 focus:ring-primary"
+          >
+            <option value="0">Tutti gli stipendi</option>
+            <option value="1000">Da €1.000 / mese</option>
+            <option value="1500">Da €1.500 / mese</option>
+            <option value="2000">Da €2.000 / mese</option>
+            <option value="2500">Da €2.500 / mese</option>
+          </select>
+        </div>
+
+        {/* Contract Filter */}
+        <div className="space-y-2">
+          <label className="text-sm font-semibold text-foreground">Tipologia Contratto</label>
+          <select
+            value={contractType}
+            onChange={(e) => setContractType(e.target.value)}
+            className="w-full bg-background border rounded-lg px-3 py-2 text-xs font-semibold text-foreground cursor-pointer focus:ring-2 focus:ring-primary"
+          >
+            <option value="ALL">Tutti i contratti</option>
+            <option value="Tempo indeterminato">Tempo Indeterminato</option>
+            <option value="Tempo determinato">Tempo Determinato</option>
+            <option value="Full-time">Full-Time</option>
+            <option value="Part-time">Part-Time</option>
+            <option value="Remote">Remote</option>
+          </select>
         </div>
 
         <div className="space-y-2">

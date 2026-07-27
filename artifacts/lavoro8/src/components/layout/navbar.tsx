@@ -5,6 +5,7 @@ import { LogOut, Menu, X, Crown, FileText } from "lucide-react";
 import { useState } from "react";
 import { LanguageSwitcher } from "./language-switcher";
 import { useLang } from "@/lib/lang-context";
+import { SavedJobsModal } from "@/components/saved-jobs-modal";
 
 const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
 
@@ -42,6 +43,7 @@ export function NavBar() {
           <Link href="/jobs" className={linkCls("/jobs")}>
             {tr("allJobs")}
           </Link>
+          <SavedJobsModal />
           <Link href="/crea-cv" className={`text-sm font-semibold flex items-center gap-1 transition-colors ${isActive("/crea-cv") ? "text-emerald-700 font-bold" : "text-emerald-600 hover:text-emerald-800"}`}>
             <FileText className="w-3.5 h-3.5" /> {tr("createCv")}
           </Link>

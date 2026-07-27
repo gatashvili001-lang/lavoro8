@@ -4,10 +4,11 @@ import { NavBar } from "@/components/layout/navbar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { MapPin, Building2, Briefcase, ExternalLink, ArrowLeft, Clock, Globe, Tag } from "lucide-react";
-import { ExternalJob } from "@/components/external-job-card";
 import { useSeo } from "@/lib/use-seo";
 import { useLang } from "@/lib/lang-context";
 import { getEnrichedDescription } from "@/lib/enrich-description";
+import { BookmarkButton } from "@/components/bookmark-button";
+import { JobAlertWidget } from "@/components/job-alert-widget";
 
 const BASE_URL = import.meta.env.BASE_URL.replace(/\/$/, "");
 const SITE_URL = "https://lavoro8.com";
@@ -161,12 +162,15 @@ export default function ExternalJobDetailPage() {
     <div className="min-h-[100dvh] flex flex-col bg-gradient-to-b from-blue-50/30 to-background">
       <NavBar />
       <main className="flex-1 container mx-auto px-4 py-8 max-w-4xl">
-        <button
-          onClick={() => setLocation("/jobs")}
-          className="flex items-center gap-2 text-muted-foreground hover:text-foreground text-sm mb-6 transition-colors"
-        >
-          <ArrowLeft className="w-4 h-4" /> {tr("backToOffers")}
-        </button>
+        <div className="flex items-center justify-between mb-6">
+          <button
+            onClick={() => setLocation("/jobs")}
+            className="flex items-center gap-2 text-muted-foreground hover:text-foreground text-sm transition-colors"
+          >
+            <ArrowLeft className="w-4 h-4" /> {tr("backToOffers")}
+          </button>
+          {job && <BookmarkButton job={job} variant="button" />}
+        </div>
 
         {loading && (
           <div className="space-y-4">
@@ -312,6 +316,11 @@ export default function ExternalJobDetailPage() {
                   {tr("goToApplication")} <ExternalLink className="w-4 h-4" />
                 </Button>
               </a>
+            </div>
+
+            {/* Job Alert Subscription */}
+            <div className="mt-8">
+              <JobAlertWidget />
             </div>
           </div>
         )}
