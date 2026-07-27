@@ -160,7 +160,14 @@ export function safeFilter(jobs: Job[], opts: {
   return target.filter(j => {
     if (!j) return false;
     if (opts.category && opts.category !== "Tutte" && j.category !== opts.category) return false;
-    if (opts.country && opts.country !== "ALL" && j.country !== opts.country) return false;
+    if (opts.country && opts.country !== "ALL") {
+      if (opts.country === "IT") {
+        const isItOrRemote = j.country === "IT" || j.country === "EU" || (j.contractType || "").toLowerCase().includes("remote") || (j.city || "").toLowerCase().includes("remote");
+        if (!isItOrRemote) return false;
+      } else if (j.country !== opts.country) {
+        return false;
+      }
+    }
     if (opts.city) {
       const jc = (j.city || "").toLowerCase();
       if (!jc.includes(opts.city.toLowerCase())) return false;

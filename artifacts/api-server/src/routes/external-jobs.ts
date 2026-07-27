@@ -68,8 +68,8 @@ function inferCountry(location: string): string {
   if (loc.match(/serbia|belgrade|beograd/)) return "RS";
   if (loc.match(/albania|tirana/)) return "AL";
   if (loc.match(/georgia|tbilisi/)) return "GE";
-  if (loc.includes("remote")) return "EU";
-  return "EU";
+  if (loc.includes("remote") || loc.includes("europe") || loc.includes("anywhere")) return "IT";
+  return "IT";
 }
 
 function inferCategory(tags: string[], title: string, types: string[], desc: string): string {
@@ -312,7 +312,11 @@ router.get("/external-jobs", async (req, res) => {
     const { search, country, category } = req.query as Record<string, string>;
     let jobs = await getExternalJobs();
     if (country && country !== "ALL") {
-      jobs = jobs.filter(j => j.country === country || (country === "EU" && j.remote));
+      if (country === "IT") {
+        jobs = jobs.filter(j => j.country === "IT" || j.country === "EU" || j.remote);
+      } else {
+        jobs = jobs.filter(j => j.country === country || (country === "EU" && j.remote));
+      }
     }
     if (category && category !== "Tutte") {
       jobs = jobs.filter(j => j.category === category);
