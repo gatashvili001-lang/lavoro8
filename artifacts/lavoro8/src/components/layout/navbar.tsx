@@ -37,18 +37,9 @@ export function NavBar() {
   return (
     <header className="border-b bg-background sticky top-0 z-50 shadow-sm">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
-          <Link href="/" className="font-display font-bold text-2xl tracking-tight text-primary flex items-center gap-0.5 shrink-0">
-            lavoro8<span className="text-amber-500">.com</span>
-          </Link>
-          <div className="hidden sm:flex items-center gap-1.5 bg-emerald-50 text-emerald-700 border border-emerald-200/80 px-2.5 py-0.5 rounded-full text-[11px] font-bold">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-            </span>
-            <span>{onlineCount} {tr("onlineNow")}</span>
-          </div>
-        </div>
+        <Link href="/" className="font-display font-bold text-2xl tracking-tight text-primary flex items-center gap-0.5 shrink-0">
+          lavoro8<span className="text-amber-500">.com</span>
+        </Link>
 
         <nav className="hidden md:flex items-center gap-5">
           <Link href="/jobs" className={linkCls("/jobs")}>

@@ -105,30 +105,26 @@ export default function Home() {
           }}
         >
 
-          {/* Ambient Glow Gradient */}
-          <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-gradient-to-r from-blue-600/30 via-amber-500/20 to-emerald-500/30 blur-[120px] rounded-full pointer-events-none z-0" />
+          {/* Apple/Stripe-Style Mesh Gradient Background */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-gradient-to-tr from-blue-600/30 via-indigo-500/20 to-amber-500/20 blur-[140px] rounded-full pointer-events-none z-0" />
 
           <div className="container mx-auto max-w-4xl text-center relative z-10">
-            {/* Live strict presence badge */}
-            <div className="inline-flex items-center gap-2.5 bg-slate-950/60 border border-white/20 rounded-full px-4 py-1.5 text-xs font-semibold text-white/90 mb-6 shadow-xl backdrop-blur-md">
-              <span className="relative flex h-2.5 w-2.5">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
-              </span>
-              <span>{onlineCount} {tr("onlineNow")}</span>
-              <span className="text-white/30">•</span>
+            {/* Clean Pill Badge */}
+            <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-4 py-1.5 text-xs font-semibold text-white/90 mb-6 shadow-lg backdrop-blur-md">
+              <span className="w-2 h-2 bg-amber-400 rounded-full animate-pulse" />
               <span>🌍 {jobs.length} {tr("heroJobsLive")}</span>
             </div>
 
-            <h1 className="text-4xl md:text-6xl font-bold font-display mb-6 leading-tight text-white drop-shadow-sm">
+            <h1 className="text-4xl md:text-6xl font-bold font-display mb-6 leading-tight text-white drop-shadow-sm tracking-tight">
               {tr("heroTitle")}{" "}
               <span className="text-amber-400 underline decoration-amber-400/30 underline-offset-8">{tr("heroHighlight")}</span>
             </h1>
-            <p className="text-lg md:text-xl mb-10 text-white/80 max-w-2xl mx-auto leading-relaxed">
+            <p className="text-lg md:text-xl mb-10 text-white/80 max-w-2xl mx-auto leading-relaxed font-normal">
               {tr("heroSubtitle")}
             </p>
 
-            <form onSubmit={handleSearch} className="bg-white/95 backdrop-blur-xl p-3.5 rounded-3xl flex flex-col gap-2.5 shadow-2xl border border-white/40 ring-1 ring-black/5">
+            {/* Ultra-Clean Glass Search Engine */}
+            <form onSubmit={handleSearch} className="bg-white/95 backdrop-blur-2xl p-4 rounded-3xl flex flex-col gap-3 shadow-2xl border border-white/50 ring-1 ring-black/5">
               <div className="flex flex-col md:flex-row gap-2">
                 <div className="flex-1 relative">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground w-5 h-5" />
@@ -202,27 +198,31 @@ export default function Home() {
               ))}
             </div>
 
-            <div className="flex flex-wrap justify-center items-center gap-2 mt-4 text-xs text-white/80">
-              <span className="font-medium text-white/60">Filtra per paese:</span>
-              {[
-                { code: "IT", name: "Italia 🇮🇹" },
-                { code: "DE", name: "Germania 🇩🇪" },
-                { code: "FR", name: "Francia 🇫🇷" },
-                { code: "ES", name: "Spagna 🇪🇸" },
-                { code: "CH", name: "Svizzera 🇨🇭" },
-                { code: "US", name: "Stati Uniti 🇺🇸" },
-                { code: "NL", name: "Olanda 🇳🇱" },
-                { code: "PL", name: "Polonia 🇵🇱" },
-                { code: "EU", name: "Tutta Europa 🇪🇺" },
-              ].map((c) => (
-                <Link
-                  key={c.code}
-                  href={`/jobs?country=${c.code}`}
-                  className="bg-white/10 hover:bg-white/20 text-white px-2.5 py-1 rounded-full border border-white/20 transition-all font-medium"
-                >
-                  {c.name}
-                </Link>
-              ))}
+            {/* Minimalist Visual Country Chips */}
+            <div className="mt-8 max-w-3xl mx-auto">
+              <div className="flex items-center justify-center gap-2 overflow-x-auto pb-2 scrollbar-none">
+                {[
+                  { code: "ALL", flag: "🌍", label: "Tutti" },
+                  { code: "IT", flag: "🇮🇹", label: "Italia" },
+                  { code: "DE", flag: "🇩🇪", label: "Germania" },
+                  { code: "FR", flag: "🇫🇷", label: "Francia" },
+                  { code: "ES", flag: "🇪🇸", label: "Spagna" },
+                  { code: "CH", flag: "🇨🇭", label: "Svizzera" },
+                  { code: "US", flag: "🇺🇸", label: "USA" },
+                  { code: "NL", flag: "🇳🇱", label: "Paesi Bassi" },
+                  { code: "PL", flag: "🇵🇱", label: "Polonia" },
+                  { code: "EU", flag: "🇪🇺", label: "Europa" },
+                ].map((c) => (
+                  <Link
+                    key={c.code}
+                    href={c.code === "ALL" ? "/jobs" : `/jobs?country=${c.code}`}
+                    className="group relative flex items-center gap-2 bg-white/10 hover:bg-white/20 active:scale-95 text-white text-xs font-semibold px-3.5 py-2 rounded-2xl border border-white/20 backdrop-blur-md transition-all shadow-sm shrink-0"
+                  >
+                    <span className="text-base leading-none">{c.flag}</span>
+                    <span>{c.label}</span>
+                  </Link>
+                ))}
+              </div>
             </div>
           </div>
         </section>
