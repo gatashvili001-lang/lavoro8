@@ -114,6 +114,18 @@ export function NavBar() {
             {tr("allJobs")}
           </Link>
           <Link
+            href="/crea-cv"
+            className={`text-sm font-semibold py-2.5 px-3 rounded-lg flex items-center gap-2 transition-colors ${
+              isActive("/crea-cv")
+                ? "bg-emerald-100 text-emerald-800 font-bold"
+                : "text-emerald-700 bg-emerald-50 hover:bg-emerald-100"
+            }`}
+            onClick={() => setMenuOpen(false)}
+          >
+            <FileText className="w-4 h-4 text-emerald-600" />
+            Crea CV Gratis
+          </Link>
+          <Link
             href="/blog"
             className={`text-sm font-medium py-2.5 px-3 rounded-lg transition-colors ${isActive("/blog") ? "bg-primary/10 text-primary font-semibold" : "hover:bg-muted"}`}
             onClick={() => setMenuOpen(false)}
