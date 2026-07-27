@@ -39,6 +39,7 @@ const CACHE_TTL = 30 * 60 * 1000;
 
 function inferCountry(location: string): string {
   const loc = location.toLowerCase();
+  if (loc.match(/united states|usa|u\.s\.a|america|new york|los angeles|chicago|houston|phoenix|philadelphia|san antonio|san diego|dallas|san jose|austin|jacksonville|fort worth|columbus|charlotte|san francisco|indianapolis|seattle|denver|washington|boston|el paso|nashville|detroit|oklahoma|portland|las vegas|memphis|louisville|baltimore|milwaukee|albuquerque|tucson|fresno|sacramento|mesa|kansas|atlanta|omaha|colorado|raleigh|miami/)) return "US";
   if (loc.match(/germany|deutschland|berlin|munich|münchen|hamburg|frankfurt|cologne|köln|düsseldorf|stuttgart/)) return "DE";
   if (loc.match(/france|paris|lyon|marseille|toulouse|nice|nantes|bordeaux/)) return "FR";
   if (loc.match(/spain|españa|madrid|barcelona|valencia|sevilla|bilbao/)) return "ES";
@@ -133,23 +134,26 @@ async function fetchRemoteOK(): Promise<ExternalJob[]> {
     return data
       .filter(j => j && j.company && j.position)
       .slice(0, 50)
-      .map((j): ExternalJob => ({
-        id: `rok-${j.id || j.slug}`,
-        title: j.position,
-        company: j.company,
-        location: j.location || "Remote",
-        country: "EU",
-        category: inferCategory(j.tags || [], j.position, [], j.description?.slice(0, 200) ?? ""),
-        contractType: "Full-time",
-        url: j.url || `https://remoteok.com/remote-jobs/${j.id}`,
-        logo: j.company_logo,
-        source: j.url || "",
-        sourceName: "RemoteOK",
-        remote: true,
-        tags: (j.tags || []).slice(0, 4),
-        postedAt: j.date ? new Date(j.date).toISOString() : new Date().toISOString(),
-        description: j.description,
-      }));
+      .map((j): ExternalJob => {
+        const loc = j.location || "USA / Remote";
+        return {
+          id: `rok-${j.id || j.slug}`,
+          title: j.position,
+          company: j.company,
+          location: loc,
+          country: inferCountry(loc),
+          category: inferCategory(j.tags || [], j.position, [], j.description?.slice(0, 200) ?? ""),
+          contractType: "Full-time",
+          url: j.url || `https://remoteok.com/remote-jobs/${j.id}`,
+          logo: j.company_logo,
+          source: j.url || "",
+          sourceName: "RemoteOK",
+          remote: true,
+          tags: (j.tags || []).slice(0, 4),
+          postedAt: j.date ? new Date(j.date).toISOString() : new Date().toISOString(),
+          description: j.description,
+        };
+      });
   } catch {
     return [];
   }
@@ -164,23 +168,26 @@ async function fetchJobicy(): Promise<ExternalJob[]> {
     if (!res.ok) return [];
     const data = (await res.json()) as any;
     const jobsList = data.jobs || [];
-    return jobsList.map((j: any): ExternalJob => ({
-      id: `jby-${j.id}`,
-      title: j.jobTitle,
-      company: j.companyName || "Azienda Verificata",
-      location: j.jobGeo || "Europa",
-      country: inferCountry(j.jobGeo || ""),
-      category: inferCategory(j.jobCategory ? [j.jobCategory] : [], j.jobTitle, [j.jobType || ""], j.jobDescription?.slice(0, 200) ?? ""),
-      contractType: inferContract([j.jobType || ""]),
-      url: j.url,
-      logo: j.companyLogo,
-      source: j.url,
-      sourceName: "Jobicy",
-      remote: true,
-      tags: [j.jobCategory, j.jobLevel].filter(Boolean),
-      postedAt: j.pubDate ? new Date(j.pubDate).toISOString() : new Date().toISOString(),
-      description: j.jobDescription,
-    }));
+    return jobsList.map((j: any): ExternalJob => {
+      const loc = j.jobGeo || "USA / Europa";
+      return {
+        id: `jby-${j.id}`,
+        title: j.jobTitle,
+        company: j.companyName || "Azienda Verificata",
+        location: loc,
+        country: inferCountry(loc),
+        category: inferCategory(j.jobCategory ? [j.jobCategory] : [], j.jobTitle, [j.jobType || ""], j.jobDescription?.slice(0, 200) ?? ""),
+        contractType: inferContract([j.jobType || ""]),
+        url: j.url,
+        logo: j.companyLogo,
+        source: j.url,
+        sourceName: "Jobicy",
+        remote: true,
+        tags: [j.jobCategory, j.jobLevel].filter(Boolean),
+        postedAt: j.pubDate ? new Date(j.pubDate).toISOString() : new Date().toISOString(),
+        description: j.jobDescription,
+      };
+    });
   } catch {
     return [];
   }
@@ -195,23 +202,26 @@ async function fetchRemotive(): Promise<ExternalJob[]> {
     if (!res.ok) return [];
     const data = (await res.json()) as any;
     const jobsList = data.jobs || [];
-    return jobsList.map((j: any): ExternalJob => ({
-      id: `rem-${j.id}`,
-      title: j.title,
-      company: j.company_name || "Azienda Verificata",
-      location: j.candidate_required_location || "Europa",
-      country: inferCountry(j.candidate_required_location || ""),
-      category: inferCategory(j.tags || [], j.title, [j.job_type || ""], j.description?.slice(0, 200) ?? ""),
-      contractType: inferContract([j.job_type || ""]),
-      url: j.url,
-      logo: j.company_logo,
-      source: j.url,
-      sourceName: "Remotive",
-      remote: true,
-      tags: (j.tags || []).slice(0, 4),
-      postedAt: j.publication_date ? new Date(j.publication_date).toISOString() : new Date().toISOString(),
-      description: j.description,
-    }));
+    return jobsList.map((j: any): ExternalJob => {
+      const loc = j.candidate_required_location || "USA / Europa";
+      return {
+        id: `rem-${j.id}`,
+        title: j.title,
+        company: j.company_name || "Azienda Verificata",
+        location: loc,
+        country: inferCountry(loc),
+        category: inferCategory(j.tags || [], j.title, [j.job_type || ""], j.description?.slice(0, 200) ?? ""),
+        contractType: inferContract([j.job_type || ""]),
+        url: j.url,
+        logo: j.company_logo,
+        source: j.url,
+        sourceName: "Remotive",
+        remote: true,
+        tags: (j.tags || []).slice(0, 4),
+        postedAt: j.publication_date ? new Date(j.publication_date).toISOString() : new Date().toISOString(),
+        description: j.description,
+      };
+    });
   } catch {
     return [];
   }
@@ -241,7 +251,7 @@ router.all(["/cron/fetch-jobs", "/api/cron/fetch-jobs"], async (req, res) => {
     const freshJobs = await getExternalJobs(true);
     res.json({
       success: true,
-      message: "Automated cron Pan-European job ingestion executed successfully",
+      message: "Automated cron Global US & Pan-European job ingestion executed successfully",
       count: freshJobs.length,
       timestamp: new Date().toISOString(),
     });

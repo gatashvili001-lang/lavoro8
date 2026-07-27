@@ -161,6 +161,7 @@ export default function Home() {
                 { code: "FR", name: "Francia 🇫🇷" },
                 { code: "ES", name: "Spagna 🇪🇸" },
                 { code: "CH", name: "Svizzera 🇨🇭" },
+                { code: "US", name: "Stati Uniti 🇺🇸" },
                 { code: "NL", name: "Olanda 🇳🇱" },
                 { code: "PL", name: "Polonia 🇵🇱" },
                 { code: "EU", name: "Tutta Europa 🇪🇺" },
