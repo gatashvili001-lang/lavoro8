@@ -97,6 +97,16 @@ function inferContract(types: string[]): string {
   return "Full-time";
 }
 
+function deduplicateJobs(jobs: ExternalJob[]): ExternalJob[] {
+  const seen = new Set<string>();
+  return jobs.filter(j => {
+    const key = `${j.title.toLowerCase().trim()}_${j.company.toLowerCase().trim()}`;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+
 async function fetchArbeitnow(): Promise<ExternalJob[]> {
   const res = await fetch("https://www.arbeitnow.com/api/job-board-api", {
     signal: AbortSignal.timeout(8000),
@@ -227,20 +237,57 @@ async function fetchRemotive(): Promise<ExternalJob[]> {
   }
 }
 
+async function fetchHimalayas(): Promise<ExternalJob[]> {
+  try {
+    const res = await fetch("https://himalayas.app/jobs/api?limit=50", {
+      signal: AbortSignal.timeout(8000),
+      headers: { "User-Agent": "lavoro8.com aggregator" },
+    });
+    if (!res.ok) return [];
+    const data = (await res.json()) as any;
+    const jobsList = data.jobs || [];
+    return jobsList.map((j: any): ExternalJob => {
+      const loc = j.locationRestrictions?.join(", ") || j.country || "USA / Europa";
+      return {
+        id: `him-${j.id || j.slug}`,
+        title: j.title,
+        company: j.companyName || "Azienda Verificata",
+        location: loc,
+        country: inferCountry(loc),
+        category: inferCategory(j.categories || [], j.title, [j.employmentType || ""], j.description?.slice(0, 200) ?? ""),
+        contractType: inferContract([j.employmentType || ""]),
+        url: j.applicationUrl || j.url,
+        logo: j.companyLogo,
+        source: j.applicationUrl || j.url,
+        sourceName: "Himalayas",
+        remote: true,
+        tags: (j.categories || []).slice(0, 4),
+        postedAt: j.pubDate ? new Date(j.pubDate).toISOString() : new Date().toISOString(),
+        description: j.description,
+      };
+    });
+  } catch {
+    return [];
+  }
+}
+
 async function getExternalJobs(forceRefresh = false): Promise<ExternalJob[]> {
   if (!forceRefresh && cache && Date.now() - cache.fetchedAt < CACHE_TTL) return cache.jobs;
-  const [r1, r2, r3, r4] = await Promise.allSettled([
+  const [r1, r2, r3, r4, r5] = await Promise.allSettled([
     fetchArbeitnow(),
     fetchRemoteOK(),
     fetchJobicy(),
     fetchRemotive(),
+    fetchHimalayas(),
   ]);
-  const jobs: ExternalJob[] = [
+  const rawJobs: ExternalJob[] = [
     ...(r1.status === "fulfilled" ? r1.value : []),
     ...(r2.status === "fulfilled" ? r2.value : []),
     ...(r3.status === "fulfilled" ? r3.value : []),
     ...(r4.status === "fulfilled" ? r4.value : []),
+    ...(r5.status === "fulfilled" ? r5.value : []),
   ];
+  const jobs = deduplicateJobs(rawJobs);
   cache = { jobs, fetchedAt: Date.now() };
   return jobs;
 }
@@ -251,7 +298,7 @@ router.all(["/cron/fetch-jobs", "/api/cron/fetch-jobs"], async (req, res) => {
     const freshJobs = await getExternalJobs(true);
     res.json({
       success: true,
-      message: "Automated cron Global US & Pan-European job ingestion executed successfully",
+      message: "Automated cron High-Volume US & EU job ingestion executed successfully",
       count: freshJobs.length,
       timestamp: new Date().toISOString(),
     });
