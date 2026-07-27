@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "wouter";
-import { MapPin, Building2, Briefcase, ArrowRight, Tag, Wifi } from "lucide-react";
+import { useLocation } from "wouter";
+import { MapPin, Building2, Briefcase, ArrowRight } from "lucide-react";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useLang } from "@/lib/lang-context";
@@ -67,6 +67,7 @@ function relativeDate(dateStr: string, lang: string): string {
 export function ExternalJobCard({ job }: { job: ExternalJob }) {
   const [isMounted, setIsMounted] = useState(false);
   const { lang, tr } = useLang();
+  const [, setLocation] = useLocation();
 
   useEffect(() => {
     setIsMounted(true);
@@ -78,10 +79,16 @@ export function ExternalJobCard({ job }: { job: ExternalJob }) {
   const company = job.company || job.sourceName || "Azienda Verificata";
   const location = job.location || "Europa";
   const country = job.country || "IT";
-  const detailPath = `/jobs/ext/${encodeURIComponent(job.id || "1")}`;
   const snippet = job.description
     ? job.description.replace(/<[^>]+>/g, "").slice(0, 120).trim() + "…"
     : null;
+
+  const handleNavigate = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (typeof window === "undefined") return;
+    setLocation(`/jobs/ext/${encodeURIComponent(job.id || "1")}`);
+  };
 
   if (!isMounted) {
     return (
@@ -94,8 +101,11 @@ export function ExternalJobCard({ job }: { job: ExternalJob }) {
   }
 
   return (
-    <Card className="hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group flex flex-col h-full border-border hover:border-blue-400 bg-background relative overflow-hidden rounded-2xl">
-      <div className="absolute top-0 right-0 flex items-center gap-1.5 z-10 p-2">
+    <Card
+      onClick={handleNavigate}
+      className="hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group flex flex-col h-full border-border hover:border-blue-400 bg-background relative overflow-hidden rounded-2xl cursor-pointer"
+    >
+      <div className="absolute top-0 right-0 flex items-center gap-1.5 z-10 p-2" onClick={(e) => e.stopPropagation()}>
         <BookmarkButton job={job} />
         <span className="bg-blue-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-lg shadow-sm">
           {job.sourceName || "External"}
@@ -117,11 +127,9 @@ export function ExternalJobCard({ job }: { job: ExternalJob }) {
             </div>
           )}
           <div className="min-w-0 flex-1 pr-10">
-            <Link href={detailPath}>
-              <h3 className="font-bold text-base leading-tight mb-1 group-hover:text-blue-600 transition-colors line-clamp-2">
-                {title}
-              </h3>
-            </Link>
+            <h3 className="font-bold text-base leading-tight mb-1 group-hover:text-blue-600 transition-colors line-clamp-2">
+              {title}
+            </h3>
             <div className="flex items-center gap-1 text-sm text-muted-foreground">
               <Building2 className="w-3.5 h-3.5 shrink-0" />
               <span className="font-medium text-foreground truncate">{company}</span>
@@ -162,12 +170,13 @@ export function ExternalJobCard({ job }: { job: ExternalJob }) {
 
       <CardFooter className="px-5 pb-4 pt-3 border-t border-border/40 bg-muted/20 flex justify-between items-center">
         <span className="text-xs text-muted-foreground">{relativeDate(job.postedAt, lang)}</span>
-        <Link
-          href={detailPath}
-          className="text-sm font-semibold text-blue-600 flex items-center gap-1 hover:gap-2 transition-all"
+        <button
+          type="button"
+          onClick={handleNavigate}
+          className="text-sm font-semibold text-blue-600 flex items-center gap-1 hover:gap-2 transition-all bg-transparent border-none p-0 cursor-pointer"
         >
           {tr("applyNow")} <ArrowRight className="w-4 h-4" />
-        </Link>
+        </button>
       </CardFooter>
     </Card>
   );

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import { formatJobSalary } from "@/lib/format";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -68,6 +68,7 @@ function relativeDate(dateStr?: string | null, lang: string = "it"): string {
 export function JobCard({ job }: { job: Job }) {
   const [isMounted, setIsMounted] = useState(false);
   const { tr, lang } = useLang();
+  const [, setLocation] = useLocation();
 
   useEffect(() => {
     setIsMounted(true);
@@ -85,6 +86,13 @@ export function JobCard({ job }: { job: Job }) {
   const daysOld = job.createdAt ? Math.floor((Date.now() - new Date(job.createdAt).getTime()) / 86400000) : 999;
   const isNew = daysOld <= 2;
 
+  const handleNavigate = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (typeof window === "undefined") return;
+    setLocation(`/jobs/${job.id}`);
+  };
+
   if (!isMounted) {
     return (
       <Card className="flex flex-col h-full border-border bg-background relative rounded-2xl p-5 shadow-sm">
@@ -96,7 +104,10 @@ export function JobCard({ job }: { job: Job }) {
   }
 
   return (
-    <Card className="hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group flex flex-col h-full border-border hover:border-primary/40 bg-background relative rounded-2xl">
+    <Card
+      onClick={handleNavigate}
+      className="hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group flex flex-col h-full border-border hover:border-primary/40 bg-background relative rounded-2xl cursor-pointer"
+    >
       {isNew && (
         <div className="absolute -top-2 -right-2 z-10">
           <span className="bg-green-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-0.5 shadow-sm">
@@ -108,9 +119,9 @@ export function JobCard({ job }: { job: Job }) {
       <CardContent className="p-5 flex-1">
         <div className="flex items-start justify-between gap-3 mb-3">
           <h3 className="font-display font-bold text-base leading-tight group-hover:text-primary transition-colors line-clamp-2 flex-1">
-            <Link href={`/jobs/${job.id}`}>{title}</Link>
+            <span>{title}</span>
           </h3>
-          <div className="flex items-center gap-1.5 shrink-0">
+          <div className="flex items-center gap-1.5 shrink-0" onClick={(e) => e.stopPropagation()}>
             <BookmarkButton job={job} />
             <Badge className={`text-[11px] font-semibold border ${catColor} bg-opacity-80`}>
               {category}
@@ -157,12 +168,13 @@ export function JobCard({ job }: { job: Job }) {
           <Clock className="w-3.5 h-3.5" />
           <span>{relativeDate(job.createdAt, lang)}</span>
         </div>
-        <Link
-          href={`/jobs/${job.id}`}
-          className="text-sm font-semibold text-primary flex items-center gap-1 hover:gap-2 transition-all"
+        <button
+          type="button"
+          onClick={handleNavigate}
+          className="text-sm font-semibold text-primary flex items-center gap-1 hover:gap-2 transition-all bg-transparent border-none p-0 cursor-pointer"
         >
           {tr("applyNow")} <ArrowRight className="w-4 h-4" />
-        </Link>
+        </button>
       </CardFooter>
     </Card>
   );
